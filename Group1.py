@@ -1,3 +1,12 @@
+#Group 1 collab session 6/8/2024
+
+from prettytable import PrettyTable
+
+g_IndividualsTable = PrettyTable()
+g_FamiliesTable = PrettyTable()
+
+g_IndiDict = {}
+
 lstSpecialTags = ["INDI",
                  "FAM"]
 
@@ -19,12 +28,14 @@ lstValidTags = ["INDI",
                 "TRLR",
                 "NOTE"]
 
+def BuildTableHeaders():
+    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
+    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
 
-def DecorateLine(inLine):
+    
+def ParseIndividuals(inLine):
     tagList = inLine.split(" ")
     
-    strReturn = "INVALID FORMAT"
-
     if tagList[0].isdigit():
         nLevel = int(tagList[0])
 
@@ -36,18 +47,32 @@ def DecorateLine(inLine):
             #Special case for INDI or FAM
             strTag  = tagList[2].strip()
             strRest = tagList[1].strip()
-            
-        strValid  = "Y" if strTag in lstValidTags else "N"
-        strReturn = "%s|%s|%s|%s" % (strLevel, strTag, strValid, strRest)
-    
-    return(strReturn)
 
-def ParsePrintFormat(inFile):
+        isValid = strTag in lstValidTags
+        strReturn = "%s|%s|%s|%s" % (strLevel, strTag, strValid, strRest)
+
+        dictUser = {"ID" : "", "Name" : "", "Gender" : "", "Birthday" : "", "Age" : "", "Alive" : "", "Death" : "", "Child" : "", "Spouse" : ""}
+
+        g_IndiDict[UserID] = dictUser
+
+def ParseFamilies(inLine):
+    pass
+
+def ParseDataFormat(inFile):
 
   with open(inFile, 'r') as fileData:
         for aLine in fileData.readlines():
-            print("--> %s" % (aLine), end='')
-            print("<-- %s" % (DecorateLine(aLine)))
+            ParseFamilies(aLine)
+            ParseIndividual(aLine)
+
+
+def PrintTables():
+    print("Individuals")
+    print(g_InvidualsTable)
+
+    print("Families")
+    print(g_FamiliesTable)
 
 if __name__ == '__main__':
-    ParsePrintFormat('Group1.ged')
+    ParseDataFormat('Group1.ged')
+    PrintTables()
