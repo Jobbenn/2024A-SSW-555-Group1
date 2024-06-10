@@ -7,10 +7,10 @@ g_FamiliesTable = PrettyTable()
 
 g_IndiDict = {}
 
-lstSpecialTags = ["INDI",
+lstIndiFamTag = ["INDI",
                  "FAM"]
 
-lstValidTags = ["INDI",
+lstIndiTags = ["INDI",
                 "NAME",
                 "SEX",
                 "BIRT",
@@ -28,51 +28,86 @@ lstValidTags = ["INDI",
                 "TRLR",
                 "NOTE"]
 
-def BuildTableHeaders():
-    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
-    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
 
-    
-def ParseIndividuals(inLine):
-    tagList = inLine.split(" ")
-    
-    if tagList[0].isdigit():
-        nLevel = int(tagList[0])
+def ParseFields(inLine):
+    dataList = inLine.split(" ")
 
-        strLevel = int(nLevel)
-        strTag   = tagList[1].strip()
-        strRest  = " ".join(tagList[2:])
+    #First we will parse our tag out into these string variables for later evaluation
+    strLevel = dataList[0]
+    strTag   = ""
+    strData  = ""
+        
+    #Check if this is a 2 or 3+ field line
+    if 2 == len(dataList):
+        strTag = dataList[1].strip()
+    else:
+        #Check for INDI/FAM out of order
+        if dataList[2].strip() in lstIndiFamTag:
+            #This is a special case where the tag is 3rd and data is 2nd
+            strData = dataList[1].strip()
+            strTag  = dataList[2].strip()
+        else:
+            #This is a standard tag
+            strTag  = dataList[1].strip()
+            strData = " ".join(dataList[2:]).strip()
 
-        if (0 == nLevel) and (3 == len(tagList)) and (tagList[2].strip() in lstSpecialTags):
-            #Special case for INDI or FAM
-            strTag  = tagList[2].strip()
-            strRest = tagList[1].strip()
+    return [strLevel, strTag, strData]
 
-        isValid = strTag in lstValidTags
-        strReturn = "%s|%s|%s|%s" % (strLevel, strTag, strValid, strRest)
 
-        dictUser = {"ID" : "", "Name" : "", "Gender" : "", "Birthday" : "", "Age" : "", "Alive" : "", "Death" : "", "Child" : "", "Spouse" : ""}
 
-        g_IndiDict[UserID] = dictUser
+def ParseData(inFile):
 
-def ParseFamilies(inLine):
-    pass
+    indID  = ""
+    famID  = ""
 
-def ParseDataFormat(inFile):
+    with open(inFile, 'r') as fileData:
 
-  with open(inFile, 'r') as fileData:
-        for aLine in fileData.readlines():
-            ParseFamilies(aLine)
-            ParseIndividual(aLine)
+        inputLine = fileData.readline()
+
+        while len(inputLine) > 0: 
+      
+            strLevel, strTag, strData = ParseFields(inputLine)
+        
+            if "0" == strLevel and "INDI" == strTag:
+                #We're ready to add the last individual (if present) to our table
+                if "" != indID:
+                    listOfContents = list(g_IndiDict[indID].values())
+                    listOfContents.insert(0, indID)
+                    g_IndividualsTable.add_row(listOfContents)
+                
+                #Generate a new dictionary entry for the new individual
+                indID = strData
+                g_IndiDict[indID] = {"NAME" : "", "SEX" : "", "BIRT" : "", "DEAT" : "N/A", "CHIL" : "N/A", "HUSB" : "N/A", "WIFE" : "N/A", "DIV" : "N/A"}
+
+            elif "1" == strLevel and "" != indID:
+                #Check if this is a single line dataset or two
+                if strTag in ["BIRT", "DEAT", "DIV"]:
+                    #This tag uses a second data line we'll process another line of data
+                    inputLine = fileData.readline()
+                    strLevel2, strTag2, strData2 = ParseFields(inputLine)
+
+                    if "2" == strLevel2 and "DATE" == strTag2:
+                        g_IndiDict[indID][strTag] = strData2
+                    else:
+                        #Format error!
+                        pass
+                elif strTag in ["NAME", "SEX", "BIRT", "DEAT", "CHIL", "HUSB", "WIFE", "DIV"]:
+                    #This tag has everything ina  single line
+                    g_IndiDict[indID][strTag] = strData
+
+            inputLine = fileData.readline()
 
 
 def PrintTables():
+    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Death", "Child", "Husband", "Wife", "Divorce"]
+    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
+    
     print("Individuals")
-    print(g_InvidualsTable)
+    print(g_IndividualsTable)
 
     print("Families")
     print(g_FamiliesTable)
 
 if __name__ == '__main__':
-    ParseDataFormat('Group1.ged')
+    ParseData('Group1.ged')
     PrintTables()
