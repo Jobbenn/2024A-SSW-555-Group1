@@ -35,20 +35,21 @@ def ParseFields(inLine):
     strLevel = dataList[0]
     strTag   = ""
     strData  = ""
-        
-    #Check if this is a 2 or 3+ field line
-    if 2 == len(dataList):
-        strTag = dataList[1].strip()
-    else:
-        #Check for INDI/FAM out of order
-        if dataList[2].strip() in ["INDI", "FAM"]:
-            #This is a special case where the tag is 3rd and data is 2nd
-            strData = dataList[1].strip()
-            strTag  = dataList[2].strip()
+    
+    if len(dataList) > 1:  
+        #Check if this is a 2 or 3+ field line
+        if 2 == len(dataList):
+            strTag = dataList[1].strip()
         else:
-            #This is a standard tag
-            strTag  = dataList[1].strip()
-            strData = " ".join(dataList[2:]).strip()
+            #Check for INDI/FAM out of order + length of data list
+            if len(dataList) > 2 and dataList[2].strip() in ["INDI", "FAM"]:       
+                #This is a special case where the tag is 3rd and data is 2nd
+                strData = dataList[1].strip()
+                strTag  = dataList[2].strip()
+            else:
+                #This is a standard tag
+                strTag  = dataList[1].strip()
+                strData = " ".join(dataList[2:]).strip()
 
     return [strLevel, strTag, strData]
 
