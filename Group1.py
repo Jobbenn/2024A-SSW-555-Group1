@@ -1,6 +1,7 @@
 #Group 1 collab session 6/8/2024
 
 from prettytable import PrettyTable
+from datetime import datetime
 
 g_IndividualsTable = PrettyTable()
 g_FamiliesTable = PrettyTable()
@@ -107,20 +108,65 @@ def ParseData(inFile):
 
             inputLine = fileData.readline()
 
-
-def PrintTables():
-    #g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Death", "Child", "Husband", "Wife", "Divorce"]
-    #g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
+def AgeDateTimeCalc(startDT, endDT):
+    durationDT = endDT - startDT
+    ageYears = durationDT.days / 365.2425
+    return int(ageYears)
     
-    #print("Individuals")
-    #print(g_IndividualsTable)
 
-    #print("Families")
-    #print(g_FamiliesTable)
+def BuildTables():
+    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
 
-    print(g_IndiDict)
-    print(g_FamDict)
+    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]   
+    
+    #Build the individuals entries
+    for anIndiID in g_IndiDict.keys():
+        listData = []
+        listData.append(anIndiID)                                            #ID
+        listData.append(g_IndiDict[anIndiID]["NAME"])                        #Name
+        listData.append(g_IndiDict[anIndiID]["SEX"])                         #Gender
+        listData.append(g_IndiDict[anIndiID]["BIRT"])                        #Birthday
+    
+        isAlive = not "DEAT" in g_IndiDict[anIndiID]
+
+        #Perform age calculation using datetime module
+        ageValue = 0
+        birthDT = datetime.strptime(g_IndiDict[anIndiID]["BIRT"], "%d %b %Y")
+        
+        if isAlive:
+            ageValue = AgeDateTimeCalc(birthDT, datetime.today())
+        else:
+            deathDT = datetime.strptime(g_IndiDict[anIndiID]["DEAT"], "%d %b %Y")
+            ageValue = AgeDateTimeCalc(birthDT, deathDT)
+            
+
+        listData.append(str(ageValue))                                       #Age
+            
+        listData.append(str(isAlive))                                        #Alive
+        listData.append("N/A" if isAlive else g_IndiDict[anIndiID]["DEAT"])  #Death
+
+        isChild = "FAMC" in g_IndiDict[anIndiID]
+        listData.append(g_IndiDict[anIndiID]["FAMC"] if isChild else "N/A")  #Child
+
+        isSpouse = "FAMS" in g_IndiDict[anIndiID]
+        listData.append(g_IndiDict[anIndiID]["FAMS"] if isSpouse else "N/A") #Spouse
+
+        g_IndividualsTable.add_row(listData)
+
+    #Build the families entries
+    for aFamID in g_FamDict.keys():
+        pass
+        
+
+def PrintTables():    
+    print("Individuals")
+    print(g_IndividualsTable)
+
+    print("Families")
+    print(g_FamiliesTable)
+
 
 if __name__ == '__main__':
     ParseData('Group1.ged')
+    BuildTables()
     PrintTables()
