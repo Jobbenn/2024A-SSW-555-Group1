@@ -97,6 +97,13 @@ def ParseData(inFile):
                         #Format error!
                         pass
                     
+                #Check if it's children as we'll need to append to the existing family children data
+                elif "CHIL" == strTag:
+                    if "CHIL" in g_FamDict[famID]:
+                        g_FamDict[famID]["CHIL"] += ", " + strData
+                    else:
+                        g_FamDict[famID]["CHIL"] = strData
+                        
                 elif strTag in lstValidTags:
                     if "" != indID:
                         g_IndiDict[indID][strTag] = strData
@@ -122,10 +129,10 @@ def BuildTables():
     #Build the individuals entries
     for anIndiID in g_IndiDict.keys():
         listData = []
-        listData.append(anIndiID)                                            #ID
-        listData.append(g_IndiDict[anIndiID]["NAME"])                        #Name
-        listData.append(g_IndiDict[anIndiID]["SEX"])                         #Gender
-        listData.append(g_IndiDict[anIndiID]["BIRT"])                        #Birthday
+        listData.append(anIndiID)                                           #ID
+        listData.append(g_IndiDict[anIndiID]["NAME"])                       #Name
+        listData.append(g_IndiDict[anIndiID]["SEX"])                        #Gender
+        listData.append(g_IndiDict[anIndiID]["BIRT"])                       #Birthday
     
         isAlive = not "DEAT" in g_IndiDict[anIndiID]
 
@@ -140,22 +147,38 @@ def BuildTables():
             ageValue = AgeDateTimeCalc(birthDT, deathDT)
             
 
-        listData.append(str(ageValue))                                       #Age
+        listData.append(str(ageValue))                                      #Age
             
-        listData.append(str(isAlive))                                        #Alive
-        listData.append("N/A" if isAlive else g_IndiDict[anIndiID]["DEAT"])  #Death
+        listData.append(str(isAlive))                                       #Alive
+        listData.append("NA" if isAlive else g_IndiDict[anIndiID]["DEAT"])  #Death
 
         isChild = "FAMC" in g_IndiDict[anIndiID]
-        listData.append(g_IndiDict[anIndiID]["FAMC"] if isChild else "N/A")  #Child
+        listData.append(g_IndiDict[anIndiID]["FAMC"] if isChild else "NA")  #Child
 
         isSpouse = "FAMS" in g_IndiDict[anIndiID]
-        listData.append(g_IndiDict[anIndiID]["FAMS"] if isSpouse else "N/A") #Spouse
+        listData.append(g_IndiDict[anIndiID]["FAMS"] if isSpouse else "NA") #Spouse
 
         g_IndividualsTable.add_row(listData)
 
     #Build the families entries
     for aFamID in g_FamDict.keys():
-        pass
+        listData = []
+
+        listData.append(aFamID)                                                                  #ID
+        listData.append(g_FamDict[aFamID]["MARR"] if "MARR" in g_FamDict[aFamID] else "Missing") #Married
+        listData.append(g_FamDict[aFamID]["DIV"] if "DIV" in g_FamDict[aFamID] else "NA")        #Divorced
+
+        husbID = g_FamDict[aFamID]["HUSB"]
+        listData.append(husbID)                                                                  #Husband
+        listData.append(g_IndiDict[husbID]["NAME"])                                              #Husband Name
+
+        wifeID = g_FamDict[aFamID]["WIFE"]
+        listData.append(wifeID)                                                                  #Wife
+        listData.append(g_IndiDict[wifeID]["NAME"])                                              #Wife Name
+
+        listData.append(g_FamDict[aFamID]["CHIL"] if "CHIL" in g_FamDict[aFamID] else "NA")      #Children
+
+        g_FamiliesTable.add_row(listData)
         
 
 def PrintTables():    
