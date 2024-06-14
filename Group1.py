@@ -1,7 +1,11 @@
-#Group 1 collab session 6/8/2024
+#Group 1 Program
 
 from prettytable import PrettyTable
 from datetime import datetime
+
+#-------------------------------------------------------------------------------
+# Data
+#-------------------------------------------------------------------------------
 
 g_IndividualsTable = PrettyTable()
 g_FamiliesTable = PrettyTable()
@@ -27,6 +31,101 @@ lstValidTags = ["INDI",
                 "TRLR",
                 "NOTE"]
 
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+# Utility Functions
+#-------------------------------------------------------------------------------
+
+def AgeDateTimeCalc(startDT, endDT):
+    durationDT = endDT - startDT
+    ageYears = durationDT.days / 365.2425
+    return int(ageYears)
+
+def AppendDictStr(key, dictItem, appendStr, spacerStr):
+    if keyItem in dictItem:
+        oldValueStr = dictItem[keyItem]
+        dictItem[keyItem] = oldValueStr + spacerStr+ appendStr
+    else:
+        dictItem[keyItem] = appendStr
+        
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+# Data Validation Functions
+#-------------------------------------------------------------------------------
+
+#User Story 01 Dates before current date
+def US01Validation():
+    today = datetime.today()
+
+    for anIndi in g_IndiDict.keys():
+        valid = True
+
+        birthDT = datetime.strptime(g_IndiDict[anIndi]["BIRT"], "%d %b %Y")
+        birthDelta = today - birthDT
+
+        if 0 == birthDelta.days:
+            valid = False
+        
+        if "DEAT" in g_IndiDict[anIndi]:
+            deathDT = datetime.strptime(g_IndiDict[anIndi]["DEAT"], "%d %b %Y")
+            deathDelta = today - deathDT
+
+            if 0 == deathDelta.days:
+                valid = False
+
+        #If we fail the test append the error code
+        if not valid:
+            AppendDictStr("ERROR", g_IndiDict[anIndi], "US01", ",")
+
+#User Story 02 Birth before marriage
+def US02Validation():
+    for aFam in g_FamDict.keys():
+        valid = True
+        
+        marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+
+        theWife = g_FamDict[aFam]["WIFE"]
+        theHusb = g_FamDict[aFam]["HUSB"]
+
+        if theWife in g_IndiDict:
+            wifeBirthDT = datetime.strptime(g_IndiDict[theWife]["BIRT"], "%d %b %Y")
+            deltaDT = marriageDT - wifeBirthDT
+
+            if 0 == deltaDT.days:
+                valid = False
+            
+        else:
+            valid = False
+
+        if theHusb in g_IndiDict:
+            husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["BIRT"], "%d %b %Y")
+            deltaDT = marriageDT - husbBirthDT
+
+            if 0 == deltaDT.days:
+                valid = False
+            
+        else:
+            valid = False
+
+        if not valid:
+            AppendDictStr("ERROR", aFam, "US02", ",")
+        
+
+def DataValidation():
+    US01Validation()
+    US02Validation()
+    #...
+
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+# File & Field Parsing Functions
+#-------------------------------------------------------------------------------
 
 def ParseFields(inLine):
     dataList = inLine.split(" ")
@@ -52,8 +151,6 @@ def ParseFields(inLine):
                 strData = " ".join(dataList[2:]).strip()
 
     return [strLevel, strTag, strData]
-
-
 
 def ParseData(inFile):
     indID  = ""
@@ -115,17 +212,17 @@ def ParseData(inFile):
                     pass
 
             inputLine = fileData.readline()
+            
+#-------------------------------------------------------------------------------
 
-def AgeDateTimeCalc(startDT, endDT):
-    durationDT = endDT - startDT
-    ageYears = durationDT.days / 365.2425
-    return int(ageYears)
-    
 
+#-------------------------------------------------------------------------------
+# Table Functions
+#-------------------------------------------------------------------------------
 def BuildTables():
-    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
+    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse", "Errors"]
 
-    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]   
+    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children", "Errors"]   
     
     #Build the individuals entries
     for anIndiID in g_IndiDict.keys():
@@ -159,6 +256,11 @@ def BuildTables():
         isSpouse = "FAMS" in g_IndiDict[anIndiID]
         listData.append(g_IndiDict[anIndiID]["FAMS"] if isSpouse else "NA") #Spouse
 
+        if "ERROR" in g_IndiDict[anIndiID]:
+            listData.append(g_IndiDict[anIndiID]["ERROR"])
+        else:
+            listData.append("")
+
         g_IndividualsTable.add_row(listData)
 
     #Build the families entries
@@ -179,6 +281,11 @@ def BuildTables():
 
         listData.append(g_FamDict[aFamID]["CHIL"] if "CHIL" in g_FamDict[aFamID] else "NA")      #Children
 
+        if "ERROR" in g_FamDict[aFamID]:
+            listData.append(g_FamDict[aFamID]["ERROR"])
+        else:
+            listData.append("")
+
         g_FamiliesTable.add_row(listData)
         
 
@@ -189,9 +296,17 @@ def PrintTables():
     print("Families")
     print(g_FamiliesTable)
 
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+# Main
+#-------------------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     ParseData('Group1.ged')
+    DataValidation()
     BuildTables()
     PrintTables()
 
