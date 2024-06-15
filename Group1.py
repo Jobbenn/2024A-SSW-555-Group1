@@ -113,11 +113,51 @@ def US02Validation():
 
         if not valid:
             AppendDictStr("ERROR", aFam, "US02", ",")
+            
+#User Story 04 Marriage before divorce
+def US04Validation():
+    for aFam in g_FamDict.keys():
+        valid = True
+            
+        if "MARR" in g_FamDict[aFam] and "DIV" in g_FamDict[aFam]:
+            marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+            divorceDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y") 
+            if divorceDT < marriageDT:
+                valid = False
         
+        if not valid:
+            AppendDictStr("Error", g_FamDict[aFam], "US04", ",")
+
+#User Story 05 Marriage before death
+def US05Validation():
+    for aFam in g_FamDict.keys():
+        valid = True
+    
+    if "MARR" in g_FamDict[aFam]:
+        marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+
+        theWife = g_FamDict[aFam]["WIFE"]
+        theHusb = g_FamDict[aFam]["HUSB"]
+
+        if theWife in g_IndiDict and "DEAT" in g_IndiDict[theWife]:
+            wifeDeathDT = datetime.strptime(g_IndiDict[theWife]["DEAT"], "%d %b %Y")
+            if wifeDeathDT < marriageDT:
+                valid = False
+
+        if theHusb in g_IndiDict and "DEAT" in g_IndiDict[theHusb]:
+            husbDeathDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
+            if husbDeathDT < marriageDT:
+                valid = False
+
+    if not valid:
+        AppendDictStr("ERROR", g_FamDict[aFam], "US05", ",")
 
 def DataValidation():
     US01Validation()
     US02Validation()
+    US04Validation()
+    US05Validation()
+    
     #...
 
 #-------------------------------------------------------------------------------
