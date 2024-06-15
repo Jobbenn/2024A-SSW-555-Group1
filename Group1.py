@@ -152,11 +152,49 @@ def US05Validation():
     if not valid:
         AppendDictStr("ERROR", g_FamDict[aFam], "US05", ",")
 
+
+# User story 07 less than 150 years old
+
+def US07Validation(birth_date, death_date=None):
+  """
+  Validates if the indivivadual is less than 150 years old.
+  
+  Args:
+  birth_date (str): The birth date in the format "DD MMM YYYY"
+  death_date (str optional): The Death date in the format "DD MMM YYYY". Default is None.
+
+  Returns:
+  bool: True if the individual is less than 150 years old, False otherwise.
+  """
+  if not birth_date:
+    return False
+    try:
+      birth = 
+datetime.strptime(birth_date, "%d %b %Y")
+except ValueError:
+    return False
+if death_date:
+  try:
+    death =
+datetime.strptime(death_date, "%d %b %Y")
+except valueError:
+return False
+age = (death - birth).days / 365.25
+else:
+  today = datetime.today()
+  age = (today - birth).days / 365.25
+  
+  return age < 150
+
 def DataValidation():
     US01Validation()
     US02Validation()
     US04Validation()
     US05Validation()
+    US07Validation()
+    US08Validation()
+  
+  
     
     #...
 
