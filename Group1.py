@@ -44,11 +44,11 @@ def AgeDateTimeCalc(startDT, endDT):
     return int(ageYears)
 
 def AppendDictStr(key, dictItem, appendStr, spacerStr):
-    if keyItem in dictItem:
-        oldValueStr = dictItem[keyItem]
-        dictItem[keyItem] = oldValueStr + spacerStr+ appendStr
+    if key in dictItem:
+        oldValueStr = dictItem[key]
+        dictItem[key] = oldValueStr + spacerStr+ appendStr
     else:
-        dictItem[keyItem] = appendStr
+        dictItem[key] = appendStr
         
 #-------------------------------------------------------------------------------
 
@@ -350,3 +350,4 @@ if __name__ == '__main__':
     BuildTables()
     PrintTables()
 
+__all__ = ['US04Validation', 'g_FamDict', 'AppendDictStr']
