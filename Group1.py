@@ -154,7 +154,6 @@ def US05Validation():
 
 
 # User story 07 less than 150 years old
-
 def US07Validation(birth_date, death_date=None):
   """
   Validates if the indivivadual is less than 150 years old.
@@ -185,6 +184,30 @@ else:
   age = (today - birth).days / 365.25
   
   return age < 150
+  
+# User Story 08 Birth before Marriage of Parents.
+def US08validation(birth_date, marriage_date):
+    """
+    Validates if the birth date is before the marriage date of parents.
+    
+    Args:
+    birth_date (str): The birth date in the format "DD MMM YYYY".
+    marriage_date (str): The marriage date in the format "DD MMM YYYY".
+    
+    Returns:
+    bool: True if the birth date is before the marriage date of parents, False otherwise.
+    """
+    if not birth_date or not marriage_date:
+        return False  # If there's no birth date or marriage date, we cannot validate
+
+    try:
+        birth = datetime.strptime(birth_date, "%d %b %Y")
+        marriage = datetime.strptime(marriage_date, "%d %b %Y")
+    except ValueError:
+        return False  # If the date format is invalid, return False
+
+    return birth < marriage
+
 
 def DataValidation():
     US01Validation()
