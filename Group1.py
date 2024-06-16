@@ -171,15 +171,16 @@ def US07Validation(birth_date, death_date=None):
         birth = datetime.strptime(birth_date, "%d %b %Y")
     except ValueError:
         return False
+    
     if death_date:
         try:
             death = datetime.strptime(death_date, "%d %b %Y")
         except ValueError:
             return False
-        age = (death - birth).days / 365.25
+        age = (death.year - birth.year) - ((death.month, death.day) < (birth.month, birth.day))
     else:
         today = datetime.today()
-        age = (today - birth).days / 365.25
+        age = (today.year - birth.year) - ((today.month, today.day) < (birth.month, birth.day))
     
     return age < 150
   
@@ -193,7 +194,7 @@ def US08Validation(birth_date, marriage_date):
     marriage_date (str): The marriage date in the format "DD MMM YYYY"
 
     Returns:
-    bool: True if the birth date is before the marriage date, False otherwise.
+    bool: True if the birth date is after the marriage date, False otherwise.
     """
     try:
         birth = datetime.strptime(birth_date, "%d %b %Y")
@@ -201,8 +202,7 @@ def US08Validation(birth_date, marriage_date):
     except ValueError:
         return False
 
-    return birth < marriage
-
+    return birth > marriage
 def DataValidation():
     US01Validation()
     US02Validation()
