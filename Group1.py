@@ -186,18 +186,25 @@ def US06Validation():
         theHusb = g_FamDict[aFam]["HUSB"]
 
         if theWife in g_IndiDict and "DEAT" in g_IndiDict[theWife]:
+
+            wifeName = g_IndiDict[theWife]["NAME"]
+
             wifeDeathDT = datetime.strptime(g_IndiDict[theWife]["DEAT"], "%d %b %Y")
             if wifeDeathDT < divorceDT:
                 valid = False
 
         if theHusb in g_IndiDict and "DEAT" in g_IndiDict[theHusb]:
+
+            husbName = g_IndiDict[theHusb]["NAME"]
+
             husbDeathDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
             if husbDeathDT < divorceDT:
                 valid = False
 
     if not valid:
-        AppendDictStr("Error US06: Divorce date of " + theWife + " and "  + theHusb + \
-                      + "occurs before one of their death dates.")
+        AppendDictStr("Error US06: Divorce date of " + wifeName + " and " + husbName + \
+                      " (" + theWife + " and "  + theHusb + ")"+ \
+                      + " occurs before one of their death dates.")
 
 # User story 07 less than 150 years old
 def US07Validation(birth_date_str, death_date_str=None):
