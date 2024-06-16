@@ -130,7 +130,7 @@ def US03Validation():
         if "DEAT" in g_IndiDict[anIndi]:
             deathDT = datetime.strptime(g_IndiDict[anIndi]["DEAT"], "%d %b %Y")
         
-        if birthDT and deathDT and deathDT > birthDT:
+        if birthDT and deathDT and deathDT < birthDT:
             valid = False
 
         if not valid:
