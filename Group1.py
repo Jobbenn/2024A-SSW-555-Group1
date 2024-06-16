@@ -113,7 +113,27 @@ def US02Validation():
 
         if not valid:
             AppendDictStr("ERROR", aFam, "US02", ",")
-            
+
+#User Story 03 Birth before death
+def US03Validation():
+    for anIndi in g_IndiDict.keys():
+        valid = True
+
+        birthDT = None
+        deathDT = None
+
+        if "BIRT" in g_IndiDict[anIndi]:
+            birthDT = datetime.strptime(g_IndiDict[anIndi]["BIRT"], "%d %b %Y")
+        
+        if "DEAT" in g_IndiDict[anIndi]:
+            deathDT = datetime.strptime(g_IndiDict[anIndi]["DEAT"], "%d %b %Y")
+        
+        if birthDT and deathDT and deathDT < birthDT:
+            valid = False
+
+        if not valid:
+            print("Error US03: Birth date of " + " (" + anIndi + ")" + " occurs after his death date.")
+
 #User Story 04 Marriage before divorce
 def US04Validation():
     for aFam in g_FamDict.keys():
@@ -203,15 +223,17 @@ def US08Validation(birth_date, marriage_date):
         return False
 
     return birth > marriage
+
 def DataValidation():
     US01Validation()
     US02Validation()
+    US03Validation()
     US04Validation()
     US05Validation()
-    US07Validation()
-    US08Validation()
+    # US07Validation()
+    # US08Validation()
   
-  
+    
     
     #...
 
@@ -383,7 +405,6 @@ def BuildTables():
 
         g_FamiliesTable.add_row(listData)
         
-
 def PrintTables():    
     print("Individuals")
     print(g_IndividualsTable)
