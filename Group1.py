@@ -198,55 +198,39 @@ def US06Validation():
                       + "occurs before one of their death dates.")
 
 # User story 07 less than 150 years old
-def US07Validation(birth_date, death_date=None):
-    """
-    Validates if the individual is less than 150 years old.
+def US07Validation(birth_date_str, death_date_str=None):
+    today = datetime.today()
+    valid = True
 
-    Args:
-    birth_date (str): The birth date in the format "DD MMM YYYY"
-    death_date (str optional): The Death date in the format "DD MMM YYYY". Default is None.
+    birthDT = datetime.strptime(birth_date_str, "%d %b %Y")
+    age = today.year - birthDT.year - ((today.month, today.day) < (birthDT.month, birthDT.day))
 
-    Returns:
-    bool: True if the individual is less than 150 years old, False otherwise.
-    """
-    if not birth_date:
-        return False
-    try:
-        birth = datetime.strptime(birth_date, "%d %b %Y")
-    except ValueError:
-        return False
+    if age >= 150:
+        valid = False
+
+    if death_date_str:
+        deathDT = datetime.strptime(death_date_str, "%d %b %Y")
+        deathAge = deathDT.year - birthDT.year - ((deathDT.month, deathDT.day) < (birthDT.month, birthDT.day))
+
+        if deathAge >= 150:
+            valid = False
+
+    return valid
+# US08 Birth before Marriage of parents
+def US08Validation(birth_date_str, marriage_date_str, divorce_date_str=None):
+    valid = True
+    birthDT = datetime.strptime(birth_date_str, "%d %b %Y")
+    marrDT = datetime.strptime(marriage_date_str, "%d %b %Y")
     
-    if death_date:
-        try:
-            death = datetime.strptime(death_date, "%d %b %Y")
-        except ValueError:
-            return False
-        age = (death.year - birth.year) - ((death.month, death.day) < (birth.month, birth.day))
-    else:
-        today = datetime.today()
-        age = (today.year - birth.year) - ((today.month, today.day) < (birth.month, birth.day))
-    
-    return age < 150
-  
-# User Story 08 Birth before Marriage of Parents.
-def US08Validation(birth_date, marriage_date):
-    """
-    Validates if the birth date is before the marriage date of parents.
+    if birthDT < marrDT:
+        valid = False
 
-    Args:
-    birth_date (str): The birth date in the format "DD MMM YYYY"
-    marriage_date (str): The marriage date in the format "DD MMM YYYY"
+    if divorce_date_str:
+        divDT = datetime.strptime(divorce_date_str, "%d %b %Y")
+        if birthDT > divDT + timedelta(days=9*30):
+            valid = False
 
-    Returns:
-    bool: True if the birth date is after the marriage date, False otherwise.
-    """
-    try:
-        birth = datetime.strptime(birth_date, "%d %b %Y")
-        marriage = datetime.strptime(marriage_date, "%d %b %Y")
-    except ValueError:
-        return False
-
-    return birth > marriage
+    return valid
 
 def DataValidation():
     US01Validation()
@@ -254,8 +238,8 @@ def DataValidation():
     US03Validation()
     US04Validation()
     US05Validation()
-    # US07Validation()
-    # US08Validation()
+    US07Validation()
+    US08Validation()
   
     
     
