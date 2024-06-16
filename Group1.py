@@ -122,17 +122,19 @@ def US03Validation():
         birthDT = None
         deathDT = None
 
+        name = g_IndiDict[anIndi]["NAME"]
+
         if "BIRT" in g_IndiDict[anIndi]:
             birthDT = datetime.strptime(g_IndiDict[anIndi]["BIRT"], "%d %b %Y")
         
         if "DEAT" in g_IndiDict[anIndi]:
             deathDT = datetime.strptime(g_IndiDict[anIndi]["DEAT"], "%d %b %Y")
         
-        if birthDT and deathDT and deathDT < birthDT:
+        if birthDT and deathDT and deathDT > birthDT:
             valid = False
 
         if not valid:
-            print("Error US03: Birth date of " + " (" + anIndi + ")" + " occurs after his death date.")
+            print("Error US03: Birth date of " + name + " (" + anIndi + ")" + " occurs after his death date.")
 
 #User Story 04 Marriage before divorce
 def US04Validation():
