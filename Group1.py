@@ -207,37 +207,42 @@ def US06Validation():
                       + " occurs before one of their death dates.")
 
 # User story 07 less than 150 years old
-def US07Validation(birth_date_str, death_date_str=None):
-    today = datetime.today()
-    valid = True
-
-    birthDT = datetime.strptime(birth_date_str, "%d %b %Y")
-    age = today.year - birthDT.year - ((today.month, today.day) < (birthDT.month, birthDT.day))
-
-    if age >= 150:
-        valid = False
-
-    if death_date_str:
-        deathDT = datetime.strptime(death_date_str, "%d %b %Y")
-        deathAge = deathDT.year - birthDT.year - ((deathDT.month, deathDT.day) < (birthDT.month, birthDT.day))
-
-        if deathAge >= 150:
-            valid = False
-
-    return valid
+def US07Validation():
+    errors = []
+    for indi_id, indi in g_IndiDict.items():
+        valid = True
+        if 'BIRT' in indi:
+            birth_date = indi['BIRT']
+            age = calculate_age(birth_date, indi.get('DEAT'))
+            if age >= 150:
+                valid = False
+                errors.append(f"ERROR: INDIVIDUAL: US07: {indi_id}: {indi['NAME']} is more than 150 years old (Age: {age})")
+    return errors
+  
 # US08 Birth before Marriage of parents
-def US08Validation(birth_date_str, marriage_date_str, divorce_date_str=None):
-    valid = True
-    birthDT = datetime.strptime(birth_date_str, "%d %b %Y")
-    marrDT = datetime.strptime(marriage_date_str, "%d %b %Y")
-    
-    if birthDT < marrDT:
-        valid = False
-
-    if divorce_date_str:
-        divDT = datetime.strptime(divorce_date_str, "%d %b %Y")
-        if birthDT > divDT + timedelta(days=9*30):
-            valid = False
+def US08Validation():
+    errors = []
+    for fam_id in g_FamDict.keys():
+        valid = True
+        if "MARR" in g_FamDict[fam_id]:
+            marriageDT = datetime.strptime(g_FamDict[fam_id]["MARR"], "%d %b %Y")
+            if "DIV" in g_FamDict[fam_id]:
+                divorceDT = datetime.strptime(g_FamDict[fam_id]["DIV"], "%d %b %Y")
+            else:
+                divorceDT = None
+            
+            for child_id in g_FamDict[fam_id].get("CHIL", []):
+                if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
+                    birth_date = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
+                    # Birth after marriage
+                    if birth_date < marriageDT:
+                        valid = False
+                        errors.append(f"ERROR: FAMILY: US08: {fam_id}: Child {child_id} born before marriage")
+                    # Birth less than 9 months after divorce
+                    if divorceDT and (birth_date - divorceDT).days > 270:
+                        valid = False
+                        errors.append(f"ERROR: FAMILY: US08: {fam_id}: Child {child_id} born more than 9 months after divorce")
+    return errors
 
     return valid
 
