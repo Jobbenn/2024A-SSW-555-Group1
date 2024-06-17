@@ -239,6 +239,7 @@ def US08Validation():
             for child_id in g_FamDict[fam_id].get("CHIL", []):
                 if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
                     AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
+
 def DataValidation():
     US01Validation()
     US02Validation()
@@ -294,6 +295,9 @@ def ParseData(inFile):
         while len(inputLine) > 0: 
       
             strLevel, strTag, strData = ParseFields(inputLine)
+
+            #Remove @ symbols from IDs
+            strData = strData[1:-1]
 
             #Individuals Top Level
             if "0" == strLevel and "INDI" == strTag:
