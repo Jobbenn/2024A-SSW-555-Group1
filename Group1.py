@@ -188,6 +188,8 @@ def US04Validation():
 
 #User Story 05 Marriage before death
 def US05Validation():
+    errors = []
+
     for aFam in g_FamDict.keys():
         valid = True
     
@@ -206,9 +208,16 @@ def US05Validation():
             husbDeathDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
             if husbDeathDT < marriageDT:
                 valid = False
-
+    
     if not valid:
-        AppendDictStr("ERROR", g_FamDict[aFam], "US05", ",")
+        wifeName = g_IndiDict[theWife]["NAME"]
+        husbName = g_IndiDict[theHusb]["NAME"]
+        # AppendDictStr("ERROR", g_FamDict[aFam], "US05", ",")
+        errors.append("Error US05: One or more of the death dates of " + \
+                      wifeName + " (" + theWife + ") and " + husbName + \
+                        " (" + theHusb + ") occurs before the date of their marriage.")
+    
+    return errors
 
 #User Story 06 Divorce before death
 def US06Validation():
