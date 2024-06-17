@@ -168,6 +168,8 @@ def US03Validation():
 
 #User Story 04 Marriage before divorce
 def US04Validation():
+    errors = []
+    
     for aFam in g_FamDict.keys():
         valid = True
             
@@ -177,8 +179,12 @@ def US04Validation():
             if divorceDT < marriageDT:
                 valid = False
         
+        # if not valid:
+        #     AppendDictStr("Error", g_FamDict[aFam], "US04", ",")
         if not valid:
-            AppendDictStr("Error", g_FamDict[aFam], "US04", ",")
+            errors.append("Error US04: The divorce date of family " + aFam + " occurs before their marriage date.")
+    
+    return errors
 
 #User Story 05 Marriage before death
 def US05Validation():
