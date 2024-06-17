@@ -99,6 +99,8 @@ def US01Validation():
 
 #User Story 02 Birth before marriage
 def US02Validation():
+    errors = []
+
     for aFam in g_FamDict.keys():
         valid = True
         
@@ -127,8 +129,17 @@ def US02Validation():
         else:
             valid = False
 
+        # if not valid:
+        #     AppendDictStr("ERROR", aFam, "US02", ",")
+        wifeName = g_IndiDict[theWife]["NAME"]
+        husbName = g_IndiDict[theHusb]["NAME"]
+        #If we fail the test, append error to errors
         if not valid:
-            AppendDictStr("ERROR", aFam, "US02", ",")
+            #AppendDictStr("ERROR", g_IndiDict[anIndi], "US01", ",")
+            errors.append("Error US02: One or more of the birthdates associated with the married couple " + \
+                           wifeName + " (" + theWife + ") and " + husbName + "(" + theHusb + \
+                            ") occurs after the date of their marriage.")
+    return errors
 
 #User Story 03 Birth before death
 def US03Validation():
