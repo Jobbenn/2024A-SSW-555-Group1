@@ -143,6 +143,8 @@ def US02Validation():
 
 #User Story 03 Birth before death
 def US03Validation():
+    errors = []
+
     for anIndi in g_IndiDict.keys():
         valid = True
 
@@ -160,7 +162,9 @@ def US03Validation():
 
         individName = g_IndiDict[anIndi]["NAME"]
         if not valid:
-            print("Error US03: Birth date of " + individName + " (" + anIndi + ")" + " occurs after his death date.")
+            errors.append("Error US03: Birth date of " + individName + " (" + anIndi + ")" + " occurs after his death date.")
+
+    return errors
 
 #User Story 04 Marriage before divorce
 def US04Validation():
