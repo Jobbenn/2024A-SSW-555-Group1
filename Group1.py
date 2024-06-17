@@ -507,5 +507,9 @@ if __name__ == '__main__':
     DataValidation()
     BuildTables()
     PrintTables()
-
-__all__ = ['US04Validation', 'g_FamDict', 'AppendDictStr']
+    
+__all__ = [
+    'US01Validation', 'US02Validation', 'US03Validation', 'US04Validation',
+    'US05Validation', 'US06Validation', 'US07Validation', 'US08Validation',
+    'g_IndiDict', 'g_FamDict', 'AppendDictStr'
+]

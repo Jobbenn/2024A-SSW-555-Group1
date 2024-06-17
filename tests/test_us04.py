@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from Group1 import US04Validation, g_FamDict, AppendDictStr
+from Group1 import US04Validation, g_FamDict
 
 class TestUS04Validation(unittest.TestCase):
 
