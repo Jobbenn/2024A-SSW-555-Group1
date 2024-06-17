@@ -293,16 +293,25 @@ def US08Validation():
 
     return errors
 
+#Takes in a list of stringLists and prints every string
+def printQueue(stringListList):
+    for list in stringListList:
+        for string in list:
+            print(string)
+
 def DataValidation():
-    US01Validation()
-    US02Validation()
-    US03Validation()
-    US04Validation()
-    US05Validation()
-    US07Validation()
-    US08Validation()
-  
-    
+    errorQueue = []
+
+    errorQueue.append(US01Validation())
+    errorQueue.append(US02Validation())
+    errorQueue.append(US03Validation())
+    errorQueue.append(US04Validation())
+    errorQueue.append(US05Validation())
+    errorQueue.append(US06Validation())
+    errorQueue.append(US07Validation())
+    errorQueue.append(US08Validation())
+
+    printQueue(errorQueue)
     
     #...
 
