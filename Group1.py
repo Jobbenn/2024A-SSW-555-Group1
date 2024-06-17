@@ -67,6 +67,8 @@ def calculate_age(birth_date, death_date=None):
 
 #User Story 01 Dates before current date
 def US01Validation():
+    errors = []
+
     today = datetime.today()
 
     for anIndi in g_IndiDict.keys():
@@ -85,9 +87,15 @@ def US01Validation():
             if 0 == deathDelta.days:
                 valid = False
 
-        #If we fail the test append the error code
+
+        individName = g_IndiDict[anIndi]["NAME"]
+        #If we fail the test, append error to errors
         if not valid:
-            AppendDictStr("ERROR", g_IndiDict[anIndi], "US01", ",")
+            #AppendDictStr("ERROR", g_IndiDict[anIndi], "US01", ",")
+            errors.append("Error US01: One or more of the dates associated with " + \
+                           individName + " (" + anIndi + ") occurs after today.")
+        
+    return errors
 
 #User Story 02 Birth before marriage
 def US02Validation():
@@ -130,8 +138,6 @@ def US03Validation():
         birthDT = None
         deathDT = None
 
-        name = g_IndiDict[anIndi]["NAME"]
-
         if "BIRT" in g_IndiDict[anIndi]:
             birthDT = datetime.strptime(g_IndiDict[anIndi]["BIRT"], "%d %b %Y")
         
@@ -141,8 +147,9 @@ def US03Validation():
         if birthDT and deathDT and deathDT < birthDT:
             valid = False
 
+        individName = g_IndiDict[anIndi]["NAME"]
         if not valid:
-            print("Error US03: Birth date of " + name + " (" + anIndi + ")" + " occurs after his death date.")
+            print("Error US03: Birth date of " + individName + " (" + anIndi + ")" + " occurs after his death date.")
 
 #User Story 04 Marriage before divorce
 def US04Validation():
