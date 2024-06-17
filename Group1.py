@@ -156,7 +156,6 @@ def US02Validation():
         husbName = g_IndiDict[theHusb]["NAME"]
         #If we fail the test, append error to errors
         if not valid:
-            #AppendDictStr("ERROR", g_IndiDict[anIndi], "US01", ",")
             errors.append("Error US02: One or more of the birthdates associated with the married couple " + \
                            wifeName + " (" + theWife + ") and " + husbName + "(" + theHusb + \
                             ") occurs after the date of their marriage.")
