@@ -257,12 +257,18 @@ def US06Validation():
 
 # User story 07 less than 150 years old
 def US07Validation():
+    errors = []
+
     for indi_id in g_IndiDict.keys():
         if 'BIRT' in g_IndiDict[indi_id]:
             birth_date = g_IndiDict[indi_id]['BIRT']
             age = calculate_age(birth_date, g_IndiDict[indi_id].get('DEAT'))
             if age >= 150:
-                AppendDictStr("ERROR", g_IndiDict[indi_id], f"ERROR: US07: {g_IndiDict[indi_id]['NAME']} ({indi_id}) is more than 150 years old", "\n")
+                #AppendDictStr("ERROR", g_IndiDict[indi_id], f"ERROR: US07: {g_IndiDict[indi_id]['NAME']} ({indi_id}) is more than 150 years old", "\n")
+                individName = g_IndiDict[indi_id]["NAME"]
+                errors.append("ERROR US07: " + individName + " (" + indi_id + ") is more than 150 years old")
+    
+    return errors
                 
 # US08 Birth before Marriage of parents
 def US08Validation():
