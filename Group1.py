@@ -94,6 +94,27 @@ def US01Validation():
             #AppendDictStr("ERROR", g_IndiDict[anIndi], "US01", ",")
             errors.append("Error US01: One or more of the dates associated with " + \
                            individName + " (" + anIndi + ") occurs after today.")
+
+    for aFam in g_FamDict.keys():
+        valid = True
+
+        marrDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+        marrDelta = today - marrDT
+
+        if 0 == marrDelta.days:
+            valid = False
+
+        if "DIV" in g_FamDict[aFam]:
+            divDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y")
+            divDelta = today - divDT
+
+            if 0 == divDelta.days:
+                valid = False
+
+                #If we fail the test, append error to errors
+        if not valid:
+            errors.append("Error US01: One or more of the dates associated with family " + \
+                           "(" + aFam + ") occurs after today.")
         
     return errors
 
@@ -419,9 +440,9 @@ def ParseData(inFile):
 # Table Functions
 #-------------------------------------------------------------------------------
 def BuildTables():
-    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse", "Errors"]
+    g_IndividualsTable.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
 
-    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children", "Errors"]   
+    g_FamiliesTable.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]   
     
     #Build the individuals entries
     for anIndiID in g_IndiDict.keys():
@@ -455,11 +476,6 @@ def BuildTables():
         isSpouse = "FAMS" in g_IndiDict[anIndiID]
         listData.append(g_IndiDict[anIndiID]["FAMS"] if isSpouse else "NA") #Spouse
 
-        if "ERROR" in g_IndiDict[anIndiID]:
-            listData.append(g_IndiDict[anIndiID]["ERROR"])
-        else:
-            listData.append("")
-
         g_IndividualsTable.add_row(listData)
 
     #Build the families entries
@@ -479,11 +495,6 @@ def BuildTables():
         listData.append(g_IndiDict[wifeID]["NAME"])                                              #Wife Name
 
         listData.append(g_FamDict[aFamID]["CHIL"] if "CHIL" in g_FamDict[aFamID] else "NA")      #Children
-
-        if "ERROR" in g_FamDict[aFamID]:
-            listData.append(g_FamDict[aFamID]["ERROR"])
-        else:
-            listData.append("")
 
         g_FamiliesTable.add_row(listData)
         
