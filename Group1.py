@@ -208,43 +208,31 @@ def US06Validation():
 
 # User story 07 less than 150 years old
 def US07Validation():
-    errors = []
-    for indi_id, indi in g_IndiDict.items():
+    for indi_id in g_IndiDict.keys():
         valid = True
-        if 'BIRT' in indi:
-            birth_date = indi['BIRT']
-            age = calculate_age(birth_date, indi.get('DEAT'))
+        if 'BIRT' in g_IndiDict[indi_id]:
+            birth_date = g_IndiDict[indi_id]['BIRT']
+            age = calculate_age(birth_date, g_IndiDict[indi_id].get('DEAT'))
             if age >= 150:
                 valid = False
-                errors.append(f"ERROR: INDIVIDUAL: US07: {indi_id}: {indi['NAME']} is more than 150 years old (Age: {age})")
-    return errors
+                AppendDictStr("ERROR", g_IndiDict[indi_id], f"ERROR: US07: {g_IndiDict[indi_id]['NAME']} ({indi_id}) is more than 150 years old", "\n")
   
 # US08 Birth before Marriage of parents
 def US08Validation():
-    errors = []
     for fam_id in g_FamDict.keys():
-        valid = True
         if "MARR" in g_FamDict[fam_id]:
             marriageDT = datetime.strptime(g_FamDict[fam_id]["MARR"], "%d %b %Y")
             if "DIV" in g_FamDict[fam_id]:
                 divorceDT = datetime.strptime(g_FamDict[fam_id]["DIV"], "%d %b %Y")
             else:
                 divorceDT = None
-            
+
             for child_id in g_FamDict[fam_id].get("CHIL", []):
                 if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
                     birth_date = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
-                    # Birth after marriage
                     if birth_date < marriageDT:
-                        valid = False
-                        errors.append(f"ERROR: FAMILY: US08: {fam_id}: Child {child_id} born before marriage")
-                    # Birth less than 9 months after divorce
-                    if divorceDT and (birth_date - divorceDT).days > 270:
-                        valid = False
-                        errors.append(f"ERROR: FAMILY: US08: {fam_id}: Child {child_id} born more than 9 months after divorce")
-    return errors
+                        AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before marriage in family {fam_id}", "\n")
 
-    return valid
 
 def DataValidation():
     US01Validation()
