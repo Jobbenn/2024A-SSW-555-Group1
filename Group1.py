@@ -49,6 +49,14 @@ def AppendDictStr(key, dictItem, appendStr, spacerStr):
         dictItem[key] = oldValueStr + spacerStr+ appendStr
     else:
         dictItem[key] = appendStr
+
+def calculate_age(birth_date, death_date=None):
+    birth_dt = datetime.strptime(birth_date, "%d %b %Y")
+    if death_date:
+        end_dt = datetime.strptime(death_date, "%d %b %Y")
+    else:
+        end_dt = datetime.today()
+    return AgeDateTimeCalc(birth_dt, end_dt)
         
 #-------------------------------------------------------------------------------
 
