@@ -221,6 +221,8 @@ def US05Validation():
 
 #User Story 06 Divorce before death
 def US06Validation():
+    errors = []
+
     for aFam in g_FamDict.keys():
         valid = True
     
@@ -247,9 +249,11 @@ def US06Validation():
                 valid = False
 
     if not valid:
-        AppendDictStr("Error US06: Divorce date of " + wifeName + " and " + husbName + \
+        errors.append("Error US06: Divorce date of " + wifeName + " and " + husbName + \
                       " (" + theWife + " and "  + theHusb + ")"+ \
                       + " occurs before one of their death dates.")
+    
+    return errors
 
 # User story 07 less than 150 years old
 def US07Validation():
