@@ -296,9 +296,6 @@ def ParseData(inFile):
       
             strLevel, strTag, strData = ParseFields(inputLine)
 
-            #Remove @ symbols from IDs
-            strData = strData[1:-1]
-
             #Individuals Top Level
             if "0" == strLevel and "INDI" == strTag:
                 #Close last tag (*)
