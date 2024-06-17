@@ -213,9 +213,8 @@ def US07Validation():
             birth_date = g_IndiDict[indi_id]['BIRT']
             age = calculate_age(birth_date, g_IndiDict[indi_id].get('DEAT'))
             if age >= 150:
-                AppendDictStr("ERROR", g_IndiDict[indi_id], f"ERROR: US07: 
-                {g_IndiDict[indi_id]['NAME']} ({indi_id}) is more than 150 years old", "\n")
-              
+                AppendDictStr("ERROR", g_IndiDict[indi_id], f"ERROR: US07: {g_IndiDict[indi_id]['NAME']} ({indi_id}) is more than 150 years old", "\n")
+                
 # US08 Birth before Marriage of parents
 def US08Validation():
     for fam_id in g_FamDict.keys():
@@ -227,14 +226,11 @@ def US08Validation():
                     birth_date = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
                     # Emphasize birth before marriage
                     if birth_date < marriageDT:
-                        AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: 
-                        {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family {fam_id}", "\n")
+                        AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family {fam_id}", "\n")
         else:
             for child_id in g_FamDict[fam_id].get("CHIL", []):
                 if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
-                    AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: 
-                    {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
-
+                    AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
 def DataValidation():
     US01Validation()
     US02Validation()
