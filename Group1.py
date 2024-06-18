@@ -75,16 +75,14 @@ def US01Validation():
         valid = True
 
         birthDT = datetime.strptime(g_IndiDict[anIndi]["BIRT"], "%d %b %Y")
-        birthDelta = today - birthDT
 
-        if 0 == birthDelta.days:
+        if birthDT >= today:
             valid = False
         
         if "DEAT" in g_IndiDict[anIndi]:
             deathDT = datetime.strptime(g_IndiDict[anIndi]["DEAT"], "%d %b %Y")
-            deathDelta = today - deathDT
 
-            if 0 == deathDelta.days:
+            if deathDT >= today:
                 valid = False
 
         #If we fail the test, append error to errors
@@ -97,16 +95,14 @@ def US01Validation():
         valid = True
 
         marrDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
-        marrDelta = today - marrDT
 
-        if 0 == marrDelta.days:
+        if marrDT >= today:
             valid = False
 
         if "DIV" in g_FamDict[aFam]:
             divDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y")
-            divDelta = today - divDT
 
-            if 0 == divDelta.days:
+            if divDT >= today:
                 valid = False
 
                 #If we fail the test, append error to errors
@@ -116,6 +112,7 @@ def US01Validation():
                            "(" + aFam + ") occurs after today.")
         
     return errors
+
 
 #User Story 02 Birth before marriage
 def US02Validation():
@@ -131,9 +128,8 @@ def US02Validation():
 
         if theWife in g_IndiDict:
             wifeBirthDT = datetime.strptime(g_IndiDict[theWife]["BIRT"], "%d %b %Y")
-            deltaDT = marriageDT - wifeBirthDT
 
-            if 0 == deltaDT.days:
+            if wifeBirthDT >= marriageDT:
                 valid = False
             
         else:
@@ -141,9 +137,8 @@ def US02Validation():
 
         if theHusb in g_IndiDict:
             husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["BIRT"], "%d %b %Y")
-            deltaDT = marriageDT - husbBirthDT
 
-            if 0 == deltaDT.days:
+            if husbBirthDT >= marriageDT:
                 valid = False
             
         else:
@@ -155,7 +150,7 @@ def US02Validation():
         if not valid:
             errors.append("Error US02: One or more of the birthdates associated with the married couple" + \
                            " (" + theWife + ") and (" + theHusb + \
-                            ") occurs after the date of their marriage.")
+                            ") in (" + aFam + ") occurs after the date of their marriage.")
     return errors
 
 #User Story 03 Birth before death
@@ -174,11 +169,11 @@ def US03Validation():
         if "DEAT" in g_IndiDict[anIndi]:
             deathDT = datetime.strptime(g_IndiDict[anIndi]["DEAT"], "%d %b %Y")
         
-        if birthDT and deathDT and deathDT < birthDT:
+        if birthDT and deathDT and deathDT <= birthDT:
             valid = False
 
         if not valid:
-            errors.append("Error US03: Birth date of (" + anIndi + ")" + " occurs after his death date.")
+            errors.append("Error US03: Birth date of (" + anIndi + ")" + " occurs after their death date.")
 
     return errors
 
@@ -191,14 +186,14 @@ def US04Validation():
             
         if "MARR" in g_FamDict[aFam] and "DIV" in g_FamDict[aFam]:
             marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
-            divorceDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y") 
-            if divorceDT < marriageDT:
+            divorceDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y")
+            
+            if divorceDT <= marriageDT:
                 valid = False
         
-        # if not valid:
-        #     AppendDictStr("Error", g_FamDict[aFam], "US04", ",")
         if not valid:
-            errors.append("Error US04: The divorce date of family " + aFam + " occurs before their marriage date.")
+            #AppendDictStr("Error", g_FamDict[aFam], "US04", ",")
+            errors.append("Error US04: The divorce date of family (" + aFam + ") occurs before their marriage date.")
     
     return errors
 
@@ -209,11 +204,13 @@ def US05Validation():
     for aFam in g_FamDict.keys():
         valid = True
     
-    if "MARR" in g_FamDict[aFam]:
         marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
 
-        theWife = g_FamDict[aFam]["WIFE"]
-        theHusb = g_FamDict[aFam]["HUSB"]
+        try:
+            theWife = g_FamDict[aFam]["WIFE"]
+            theHusb = g_FamDict[aFam]["HUSB"]
+        except:
+            continue
 
         if theWife in g_IndiDict and "DEAT" in g_IndiDict[theWife]:
             wifeDeathDT = datetime.strptime(g_IndiDict[theWife]["DEAT"], "%d %b %Y")
@@ -224,11 +221,11 @@ def US05Validation():
             husbDeathDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
             if husbDeathDT < marriageDT:
                 valid = False
-    
-    if not valid:
-        # AppendDictStr("ERROR", g_FamDict[aFam], "US05", ",")
-        errors.append("Error US05: One or more of the death dates of" + \
-                      " (" + theWife + ") and (" + theHusb + ") occurs before the date of their marriage.")
+        
+        if not valid:
+            # AppendDictStr("ERROR", g_FamDict[aFam], "US05", ",")
+            errors.append("Error US05: One or more of the death dates of" + \
+                          " (" + theWife + ") and (" + theHusb + ") in family (" + aFam + ") occurs before the date of their marriage.")
     
     return errors
 
@@ -239,28 +236,31 @@ def US06Validation():
     for aFam in g_FamDict.keys():
         valid = True
     
-    if "DIV" in g_FamDict[aFam]:
-        divorceDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y")
+        if "DIV" in g_FamDict[aFam]:
+            divorceDT = datetime.strptime(g_FamDict[aFam]["DIV"], "%d %b %Y")
 
-        theWife = g_FamDict[aFam]["WIFE"]
-        theHusb = g_FamDict[aFam]["HUSB"]
+            try:
+                theWife = g_FamDict[aFam]["WIFE"]
+                theHusb = g_FamDict[aFam]["HUSB"]
+            except:
+                continue
 
-        if theWife in g_IndiDict and "DEAT" in g_IndiDict[theWife]:
+            if theWife in g_IndiDict and "DEAT" in g_IndiDict[theWife]:
 
-            wifeDeathDT = datetime.strptime(g_IndiDict[theWife]["DEAT"], "%d %b %Y")
-            if wifeDeathDT < divorceDT:
-                valid = False
+                wifeDeathDT = datetime.strptime(g_IndiDict[theWife]["DEAT"], "%d %b %Y")
+                if wifeDeathDT < divorceDT:
+                    valid = False
 
-        if theHusb in g_IndiDict and "DEAT" in g_IndiDict[theHusb]:
+            if theHusb in g_IndiDict and "DEAT" in g_IndiDict[theHusb]:
 
-            husbDeathDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
-            if husbDeathDT < divorceDT:
-                valid = False
+                husbDeathDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
+                if husbDeathDT < divorceDT:
+                    valid = False
 
-    if not valid:
-        errors.append("Error US06: Divorce date of" + \
-                      " (" + theWife + ") and ("  + theHusb + ")" \
-                      + " occurs before one of their death dates.")
+        if not valid:
+            errors.append("Error US06: Divorce date of" + \
+                          " (" + theWife + ") and ("  + theHusb + ")" \
+                          + " in family (" + aFam + ") occurs before one of their death dates.")
     
     return errors
 
@@ -292,12 +292,12 @@ def US08Validation():
                     # Emphasize birth before marriage
                     if birth_date < marriageDT:
                         #AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family {fam_id}", "\n")
-                        errors.append("Error US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family {fam_id}.")
+                        errors.append(f"Error US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family ({fam_id}).")
         else:
             for child_id in g_FamDict[fam_id].get("CHIL", []):
                 if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
                     #AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
-                    errors.append("Error US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}")
+                    errors.append(f"Error US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family ({fam_id})")
 
     return errors
 
