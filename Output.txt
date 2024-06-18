@@ -1,66 +1,20 @@
 Individuals
-+-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
-|   ID  |          Name         | Gender |   Birthday  | Age | Alive |    Death    | Child | Spouse |
-+-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
-|  @I1@ |       Noel Ross       |   M    |  1 APR 1972 |  52 |  True |      NA     |  @F1@ |   NA   |
-|  @I2@ |     Blaine /Ross/     |   M    | 16 APR 1950 |  74 |  True |      NA     |  @F3@ |  @F2@  |
-|  @I3@ |    Elinor /Reeves/    |   F    |  6 FEB 1955 |  69 |  True |      NA     |  @F4@ |  @F1@  |
-|  @I4@ |      Bryn /Ross/      |   F    |  2 MAR 1977 |  47 |  True |      NA     |  @F1@ |  @F5@  |
-|  @I5@ |      Karl /Gould/     |   M    | 11 SEP 1975 |  48 |  True |      NA     |  @F6@ |  @F5@  |
-|  @I6@ |    Carter /Reeves/    |   M    |  6 AUG 1920 |  60 | False |  4 APR 1981 |  @F7@ |  @F4@  |
-|  @I7@ |   Elodie /Jennings/   |   F    |  5 AUG 1929 |  56 | False |  2 DEC 1985 |  @F8@ |  @F4@  |
-|  @I8@ |     Louis /Gould/     |   M    |  3 AUG 1949 |  74 |  True |      NA     |  @F9@ |  @F6@  |
-|  @I9@ |     Livia /Monroe/    |   F    |  9 JUL 1958 |  65 |  True |      NA     | @F10@ |  @F6@  |
-| @I10@ |    Brian /Jennings/   |   M    |  4 AUG 1980 |  19 | False |  5 MAR 2000 |   NA  |  @F8@  |
-| @I11@ | Katerina /Harrington/ |   F    |  3 MAR 1905 |  85 | False |  7 APR 1990 |   NA  |  @F8@  |
-| @I12@ |     Hugo /Monroe/     |   M    | 17 MAR 1922 |  74 | False | 12 FEB 1997 | @F11@ | @F10@  |
-| @I13@ |     Janine /Hogan/    |   F    |  3 JUL 1927 |  79 | False |  3 APR 2007 | @F12@ | @F10@  |
-| @I14@ |     James /Hogan/     |   M    |  2 FEB 1900 | 106 | False |  5 MAR 2006 |   NA  | @F12@  |
-| @I15@ |    Melanie /Jones/    |   F    |  4 FEB 1899 |  99 | False |  7 JUN 1998 |   NA  | @F12@  |
-| @I16@ |     Mark /Reeves/     |   M    |  4 OCT 1890 |  80 | False | 12 JUL 1971 |   NA  |  @F7@  |
-| @I17@ |  Jodie /Fitzpatrick/  |   F    | 15 NOV 1899 |  67 | False |  2 JUL 1967 |   NA  |  @F7@  |
-| @I18@ |      Alfie /Ross/     |   M    |  4 AUG 1919 |  58 | False |  4 MAY 1978 | @F13@ |  @F3@  |
-| @I19@ |    Louise /Hunter/    |   F    |  7 JUN 1924 |  80 | False | 12 MAR 2005 | @F15@ | @F14@  |
-| @I20@ |     Henry /Hunter/    |   M    |  3 APR 1888 |  62 | False |  6 MAY 1950 |   NA  | @F15@  |
-| @I21@ |      Marie /Cain/     |   F    |  2 JUL 1899 | 101 | False |  3 MAY 2001 |   NA  | @F15@  |
-| @I22@ |     Carter /Ross/     |   M    |  3 FEB 1870 |  78 | False |  1 JAN 1949 |   NA  | @F13@  |
-| @I23@ |      Leia /Wall/      |   F    |  1 APR 1891 |  97 | False |  5 OCT 1988 |   NA  | @F13@  |
-| @I24@ |     Cara /Reeves/     |   F    |  4 FEB 1957 |  67 |  True |      NA     |  @F4@ |   NA   |
-| @I25@ |      James /Ross/     |   M    |  2 FEB 1980 |  44 |  True |      NA     |  @F1@ |   NA   |
-| @I26@ |     Mark /Monroe/     |   M    |  7 NOV 1900 |  76 | False |  2 APR 1977 |   NA  | @F11@  |
-| @I27@ |     Livia /Conway/    |   F    |  2 APR 1899 |  46 | False |  3 AUG 1945 |   NA  | @F11@  |
-| @I28@ |      Jeff /Gould/     |   M    |  4 APR 1922 |  73 | False |  2 MAY 1995 | @F16@ |  @F9@  |
-| @I29@ |     Jenny /Dober/     |   F    |  5 MAR 1919 |  73 | False |  3 OCT 1992 | @F17@ |  @F9@  |
-| @I30@ |     Brian /Dober/     |   M    |  4 JAN 1900 |  72 | False | 11 AUG 1972 |   NA  | @F17@  |
-| @I31@ |    Dorothy /Weller/   |   F    |  1 MAR 1900 |  67 | False |  4 JUN 1967 |   NA  | @F17@  |
-| @I32@ |     Hamish /Gould/    |   M    |  5 AUG 1899 |  50 | False |  6 MAR 1950 |   NA  | @F16@  |
-| @I33@ |      Eli /Bourn/      |   F    | 25 APR 1906 | 104 | False |  3 DEC 2010 |   NA  | @F16@  |
-| @I34@ |     Sarah /Edmond/    |   F    |  4 JUL 1962 |  61 |  True |      NA     |   NA  |  @F2@  |
-| @I35@ |     Mark /Edmond/     |   M    |  2 OCT 1989 |  34 |  True |      NA     |  @F2@ |   NA   |
-| @I36@ |      John /Dale/      |   M    |  4 MAY 1902 |  40 | False |  2 JUL 1942 | @F18@ | @F14@  |
-| @I37@ |      John /Dale/      |   M    |  3 APR 1840 |  91 | False |  2 MAR 1932 |   NA  | @F18@  |
-| @I38@ |     Minny /Alens/     |   F    |  2 FEB 1850 |  99 | False |  8 MAR 1949 |   NA  | @F18@  |
-+-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
++----+----------------+--------+-------------+-----+-------+-------------+-------+--------+
+| ID |      Name      | Gender |   Birthday  | Age | Alive |    Death    | Child | Spouse |
++----+----------------+--------+-------------+-----+-------+-------------+-------+--------+
+| I1 |   Tom Jones    |   M    |  1 JUL 2003 |  20 |  True |      NA     |   F1  |   NA   |
+| I2 |   Sam Jones    |   M    | 13 APR 1967 |  57 |  True |      NA     |   NA  |   F1   |
+| I3 | Sandra Hanson  |   F    |  8 JUL 1970 |  53 |  True |      NA     |   F2  |   F1   |
+| I4 | Regina Guster  |   F    |  5 AUG 1928 |  72 | False | 16 DEC 2000 |   NA  |   F2   |
+| I5 | Ronald Hanson  |   M    | 15 FEB 1930 |  94 |  True |      NA     |   NA  |   F3   |
+| I6 |  Reuel Giver   |   F    |  8 JUL 1929 |  23 | False |  8 JAN 1953 |   NA  |   F3   |
+| I7 | Sammie Bethels |   F    |  4 MAR 1952 |  72 |  True |      NA     |   F3  |   NA   |
++----+----------------+--------+-------------+-----+-------+-------------+-------+--------+
 Families
-+-------+---------+----------+------------+------------------+---------+-----------------------+-------------------+
-|   ID  | Married | Divorced | Husband ID |   Husband Name   | Wife ID |       Wife Name       |      Children     |
-+-------+---------+----------+------------+------------------+---------+-----------------------+-------------------+
-|  @F1@ | Missing |    NA    |    @I2@    |  Blaine /Ross/   |   @I3@  |    Elinor /Reeves/    | @I1@, @I4@, @I25@ |
-|  @F2@ | Missing |    NA    |    @I2@    |  Blaine /Ross/   |  @I34@  |     Sarah /Edmond/    |       @I35@       |
-|  @F3@ | Missing |    NA    |   @I18@    |   Alfie /Ross/   |  @I19@  |    Louise /Hunter/    |        @I2@       |
-| @F14@ | Missing |    NA    |   @I36@    |   John /Dale/    |  @I19@  |    Louise /Hunter/    |         NA        |
-|  @F4@ | Missing |    NA    |    @I6@    | Carter /Reeves/  |   @I7@  |   Elodie /Jennings/   |    @I3@, @I24@    |
-|  @F5@ | Missing |    NA    |    @I5@    |   Karl /Gould/   |   @I4@  |      Bryn /Ross/      |         NA        |
-|  @F6@ | Missing |    NA    |    @I8@    |  Louis /Gould/   |   @I9@  |     Livia /Monroe/    |        @I5@       |
-|  @F7@ | Missing |    NA    |   @I16@    |  Mark /Reeves/   |  @I17@  |  Jodie /Fitzpatrick/  |        @I6@       |
-|  @F8@ | Missing |    NA    |   @I10@    | Brian /Jennings/ |  @I11@  | Katerina /Harrington/ |        @I7@       |
-|  @F9@ | Missing |    NA    |   @I28@    |   Jeff /Gould/   |  @I29@  |     Jenny /Dober/     |        @I8@       |
-| @F10@ | Missing |    NA    |   @I12@    |  Hugo /Monroe/   |  @I13@  |     Janine /Hogan/    |        @I9@       |
-| @F11@ | Missing |    NA    |   @I26@    |  Mark /Monroe/   |  @I27@  |     Livia /Conway/    |       @I12@       |
-| @F12@ | Missing |    NA    |   @I14@    |  James /Hogan/   |  @I15@  |    Melanie /Jones/    |       @I13@       |
-| @F13@ | Missing |    NA    |   @I22@    |  Carter /Ross/   |  @I23@  |      Leia /Wall/      |       @I18@       |
-| @F15@ | Missing |    NA    |   @I20@    |  Henry /Hunter/  |  @I21@  |      Marie /Cain/     |       @I19@       |
-| @F16@ | Missing |    NA    |   @I32@    |  Hamish /Gould/  |  @I33@  |      Eli /Bourn/      |       @I28@       |
-| @F17@ | Missing |    NA    |   @I30@    |  Brian /Dober/   |  @I31@  |    Dorothy /Weller/   |       @I29@       |
-| @F18@ | Missing |    NA    |   @I37@    |   John /Dale/    |  @I38@  |     Minny /Alens/     |       @I36@       |
-+-------+---------+----------+------------+------------------+---------+-----------------------+-------------------+
++----+------------+----------+------------+---------------+---------+---------------+----------+
+| ID |  Married   | Divorced | Husband ID |  Husband Name | Wife ID |   Wife Name   | Children |
++----+------------+----------+------------+---------------+---------+---------------+----------+
+| F1 | 5 MAR 2000 |    NA    |     I2     |   Sam Jones   |    I3   | Sandra Hanson |    I1    |
+| F2 | 7 JUL 1955 |    NA    |     I5     | Ronald Hanson |    I4   | Regina Guster |    I3    |
+| F3 | 8 FEB 1950 |    NA    |     I5     | Ronald Hanson |    I6   |  Reuel Giver  |    I7    |
++----+------------+----------+------------+---------------+---------+---------------+----------+
