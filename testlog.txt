@@ -1,0 +1,42 @@
+Python 3.9.2 (tags/v3.9.2:1a79785, Feb 19 2021, 13:44:55) [MSC v.1928 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license()" for more information.
+>>> 
+============== RESTART: D:\SSW555\2024A-SSW-555-Group1\tests_us.py =============
+.....................F....F........FF...
+======================================================================
+FAIL: test_US05_invalid_death_same_day_as_marriage (__main__.TestValidationFunctions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 155, in test_US05_invalid_death_same_day_as_marriage
+    self.assertTrue(StringListErrorSearch("Error US05:", "(@F15@)", errors))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_US06_invalid_death_same_day_as_divorce (__main__.TestValidationFunctions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 186, in test_US06_invalid_death_same_day_as_divorce
+    self.assertTrue(StringListErrorSearch("Error US06:", "(@F20@)", errors))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_US08_invalid_birth_before_marriage (__main__.TestValidationFunctions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 237, in test_US08_invalid_birth_before_marriage
+    self.assertTrue(StringListErrorSearch("Error US08:", "(@I40@)", errors))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_US08_invalid_birth_same_day_as_marriage (__main__.TestValidationFunctions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 243, in test_US08_invalid_birth_same_day_as_marriage
+    self.assertTrue(StringListErrorSearch("Error US08:", "(@I43@)", errors))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 40 tests in 0.163s
+
+FAILED (failures=4)
+>>> 
