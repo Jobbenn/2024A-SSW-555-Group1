@@ -329,6 +329,33 @@ def US15Validation():
     
     return errors
 
+# US21 Husband in family should be male and wife in family should be female
+def US21Validation():
+    errors = []
+
+    valid = True
+
+    for fam_id in g_FamDict.keys():
+        if "HUSB" in g_FamDict[fam_id]:
+            husbID = g_FamDict[fam_id]["HUSB"]
+
+            if husbID in g_IndiDict and "SEX" in g_IndiDict[husbID]:
+                if not g_IndiDict[husbID]["SEX"].upper == "M":
+                    valid = False
+
+        if "WIFE" in g_FamDict[fam_id]:
+            wifeID = g_FamDict[fam_id]["WIFE"]
+
+            if wifeID in g_IndiDict and "SEX" in g_IndiDict[wifeID]:
+                if not g_IndiDict[wifeID]["SEX"].upper == "F":
+                    valid = False
+            
+    if not valid:
+        #AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
+        errors.append("Error US21: family (" + fam_id + ") incorrect gender roles!\n")
+    
+    return errors
+
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
     for list in stringListList:
@@ -347,6 +374,7 @@ def DataValidation():
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
     errorQueue.append(US15Validation())
+    errorQueue.append(US21Validation())
 
     printQueue(errorQueue)
     
