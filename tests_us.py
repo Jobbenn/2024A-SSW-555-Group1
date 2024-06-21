@@ -242,5 +242,43 @@ class TestValidationFunctions(unittest.TestCase):
         errors = Group1.US08Validation()
         self.assertTrue(StringListErrorSearch("Error US08:", "(@I43@)", errors))
 
+    # US15 Tests
+    def test_US15_01_child(self):
+        Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": "@I01@"}
+        errors = Group1.US15Validation()
+        self.assertFalse(StringListErrorSearch("Error US15:", "(@F99@)", errors))  
+
+    def test_US15_10_children(self):
+        childStr = ""
+        for i in range(10):
+            childStr += "@%d@,"
+        Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": childStr}
+        errors = Group1.US15Validation()
+        self.assertFalse(StringListErrorSearch("Error US15:", "(@F99@)", errors))  
+
+    def test_US15_14_children(self):
+        childStr = ""
+        for i in range(14):
+            childStr += "@%d@,"
+        Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": childStr}
+        errors = Group1.US15Validation()
+        self.assertFalse(StringListErrorSearch("Error US15:", "(@F99@)", errors))  
+
+    def test_US15_15_children(self):
+        childStr = ""
+        for i in range(15):
+            childStr += "@%d@,"
+        Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": childStr}
+        errors = Group1.US15Validation()
+        self.assertTrue(StringListErrorSearch("Error US15:", "(@F99@)", errors))  
+
+    def test_US15_20_children(self):
+        childStr = ""
+        for i in range(20):
+            childStr += "@%d@,"
+        Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": childStr}
+        errors = Group1.US15Validation()
+        self.assertTrue(StringListErrorSearch("Error US15:", "(@F99@)", errors))  
+
 if __name__ == '__main__':
     unittest.main()

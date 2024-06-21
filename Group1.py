@@ -301,6 +301,34 @@ def US08Validation():
 
     return errors
 
+# US15 There should be fewer than 15 siblings in a family
+def US15Validation():
+    errors = []
+
+    valid = True
+
+    for fam_id in g_FamDict.keys():
+
+        if "CHIL" in g_FamDict[fam_id]:
+            childStr = g_FamDict[fam_id]["CHIL"]
+
+            numAts = 0
+
+            for aChar in childStr:
+                if '@' == aChar:
+                    numAts += 1
+
+            numChildren = numAts / 2
+
+            if numChildren > 14:
+                valid = False
+
+    if not valid:
+        #AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
+        errors.append("Error US15: family (" + fam_id + ") has 15 or more siblings!\n")
+    
+    return errors
+
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
     for list in stringListList:
@@ -318,6 +346,7 @@ def DataValidation():
     errorQueue.append(US06Validation())
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
+    errorQueue.append(US15Validation())
 
     printQueue(errorQueue)
     
