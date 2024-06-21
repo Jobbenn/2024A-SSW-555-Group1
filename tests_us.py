@@ -15,22 +15,22 @@ def StringListErrorSearch(prefixStr, idStr, errorList):
 class TestValidationFunctions(unittest.TestCase):
     # US01 Tests
     def test_US01_valid_dates(self):
-        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000", "SEX":"M"}
         errors = Group1.US01Validation()
         self.assertFalse(StringListErrorSearch("Error US01:", "(@I1@)", errors))
 
     def test_US01_valid_dates_2(self):
-        Group1.g_IndiDict["@I2@"] = {"BIRT": "01 JAN 1990"}
+        Group1.g_IndiDict["@I2@"] = {"BIRT": "01 JAN 1990", "SEX":"F"}
         errors = Group1.US01Validation()
         self.assertFalse(StringListErrorSearch("Error US01:", "(@I2@)", errors))
 
     def test_US01_valid_dates_3(self):
-        Group1.g_IndiDict["@I3@"] = {"BIRT": "01 JAN 1980"}
+        Group1.g_IndiDict["@I3@"] = {"BIRT": "01 JAN 1980", "SEX":"M"}
         errors = Group1.US01Validation()
         self.assertFalse(StringListErrorSearch("Error US01:", "(@I3@)", errors))
 
     def test_US01_invalid_future_birth_date(self):
-        Group1.g_IndiDict["@I4@"] = {"BIRT": "01 JAN 3000"}
+        Group1.g_IndiDict["@I4@"] = {"BIRT": "01 JAN 3000", "SEX":"F"}
         errorsList = Group1.US01Validation()
         self.assertTrue(StringListErrorSearch("Error US01:", "(@I4@)", errorsList))
 
@@ -278,7 +278,30 @@ class TestValidationFunctions(unittest.TestCase):
             childStr += "@%d@,"
         Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": childStr}
         errors = Group1.US15Validation()
-        self.assertTrue(StringListErrorSearch("Error US15:", "(@F99@)", errors))  
+        self.assertTrue(StringListErrorSearch("Error US15:", "(@F99@)", errors))
+
+    # US21 Tests
+    def test_US21_Gender_HMWF(self):
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000", "SEX":"M"}
+        Group1.g_IndiDict["@I2@"] = {"BIRT": "01 JAN 2000", "SEX":"F"}
+        Group1.g_FamDict["@F99@"] = {"HUSB": "@I1@", "WIFE": "@I2@"}
+        errors = Group1.US21Validation()
+        print(errors)
+        self.assertTrue(StringListErrorSearch("Error US21:", "(@F99@)", errors))
+        
+    def test_US21_Gender_HFWF(self):
+        Group1.g_IndiDict["@I2@"] = {"BIRT": "01 JAN 2000", "SEX":"F"}
+        Group1.g_IndiDict["@I4@"] = {"BIRT": "01 JAN 2000", "SEX":"F"}
+        Group1.g_FamDict["@F99@"] = {"HUSB": "@I2@", "WIFE": "@I4@"}
+        errors = Group1.US21Validation()
+        self.assertTrue(StringListErrorSearch("Error US21:", "(@F99@)", errors))
+
+    def test_US21_Gender_HMWM(self):
+        Group1.g_FamDict["@F99@"] = {"HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000", "SEX":"M"}
+        Group1.g_IndiDict["@I3@"] = {"BIRT": "01 JAN 2000", "SEX":"M"}
+        errors = Group1.US21Validation()
+        self.assertTrue(StringListErrorSearch("Error US21:", "(@F99@)", errors))
 
 if __name__ == '__main__':
     unittest.main()
