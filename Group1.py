@@ -480,6 +480,8 @@ def DataValidation():
     errorQueue.append(US06Validation())
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
+    errorQueue.append(US12Validation())
+    errorQueue.append(US13Validation())
     errorQueue.append(US15Validation())
     errorQueue.append(US21Validation())
 
