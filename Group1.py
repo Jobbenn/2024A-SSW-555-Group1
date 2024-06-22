@@ -1,7 +1,7 @@
 #Group 1 Program
 
 from prettytable import PrettyTable
-from datetime import datetime
+from datetime import datetime, timedelta
 
 #-------------------------------------------------------------------------------
 # Data
@@ -302,36 +302,37 @@ def US08Validation():
 
     return errors
 
-    #09 Birth before death of parents
-    def US09Validation():
-        errors =[]
+#09 Birth before death of parents
+def US09Validation():
+    for aFam in g_FamDict.keys():
+        marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
 
-        Valid = True
-        for fam_id in g_FamDict.keys():
-            father_death_date = None
-        mother_death_date = None
+        theWife = g_FamDict[aFam]["WIFE"]
+        theHusb = g_FamDict[aFam]["HUSB"]
+
+        theWifeName = g_IndiDict[theWife]["NAME"]
+        theHusbName = g_IndiDict[theHusb]["NAME"]
 
         if husband_id:
-            father_death = indiDict[husband_id].get('DEAT')
+            father_death = g_IndiDict[husband_id].get('DEAT')
             if father_death:
                 father_death_date = parse_gedcom_date(father_death)
 
         if wife_id:
-            mother_death = indiDict[wife_id].get('DEAT')
+            mother_death = g_IndiDict[wife_id].get('DEAT')
             if mother_death:
                 mother_death_date = parse_gedcom_date(mother_death)
 
-        for child_id in family.get('CHIL', []):
-            birth_date_str = indiDict[child_id].get('BIRT')
+        for child_id in font_family_aliases.get('CHIL', []):
+            birth_date_str = g_IndiDict[child_id].get('BIRT')
             if birth_date_str:
+                
                 birth_date = parse_gedcom_date(birth_date_str)
                 if mother_death_date and birth_date > mother_death_date:
-                    errors.append("Error US09: family (" + fam_id + ") born after mother's death!\n")
+                    errors.append(f"Error US09: Child {child_id} born after mother's death.")
                 if father_death_date and birth_date > father_death_date + timedelta(days=9*30):
-                    errors.append("Error US09: family (" + fam_id + ") born more than 9 months after father's death!\n")
+                    errors.append(f"Error US09: Child {child_id} born more than 9 months after father's death.")
     return errors
-
-
 
 def US10Validation():
     errors = []
@@ -480,6 +481,7 @@ def DataValidation():
     errorQueue.append(US06Validation())
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
+    errorQueue.append(US09Validation())
     errorQueue.append(US12Validation())
     errorQueue.append(US13Validation())
     errorQueue.append(US15Validation())
