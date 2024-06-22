@@ -240,6 +240,52 @@ class TestValidationFunctions(unittest.TestCase):
         errors = Group1.US08Validation()
         self.assertTrue(StringListErrorSearch("Error US08:", "(@I43@)", errors))
 
+    # US12 Tests
+    def test_US12_valid_parent_age_difference(self):
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 1950", "SEX": "M"}
+        Group1.g_IndiDict["@I2@"] = {"BIRT": "05 MAY 1955", "SEX": "F"}
+        Group1.g_IndiDict["@I3@"] = {"BIRT": "15 MAR 1975"}
+        Group1.g_IndiDict["@I4@"] = {"BIRT": "10 DEC 1980"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "CHIL": ["@I3@", "@I4@"]}
+        errors = Group1.US12Validation()
+        self.assertFalse(StringListErrorSearch("Error US12:", "(@I3@)", errors))
+        self.assertFalse(StringListErrorSearch("Error US12:", "(@I4@)", errors))
+
+    def test_US12_valid_parent_age_difference_2(self):
+        Group1.g_IndiDict["@I5@"] = {"BIRT": "01 JAN 1940", "SEX": "M"}
+        Group1.g_IndiDict["@I6@"] = {"BIRT": "05 MAY 1950", "SEX": "F"}
+        Group1.g_IndiDict["@I7@"] = {"BIRT": "15 MAR 1965"}
+        Group1.g_IndiDict["@I8@"] = {"BIRT": "10 DEC 1970"}
+        Group1.g_FamDict["@F2@"] = {"HUSB": "@I5@", "WIFE": "@I6@", "CHIL": ["@I7@", "@I8@"]}
+        errors = Group1.US12Validation()
+        self.assertFalse(StringListErrorSearch("Error US12:", "(@I7@)", errors))
+        self.assertFalse(StringListErrorSearch("Error US12:", "(@I8@)", errors))
+
+    def test_US12_valid_parent_age_difference_3(self):
+        Group1.g_IndiDict["@I9@"] = {"BIRT": "01 JAN 1960", "SEX": "M"}
+        Group1.g_IndiDict["@I10@"] = {"BIRT": "05 MAY 1965", "SEX": "F"}
+        Group1.g_IndiDict["@I11@"] = {"BIRT": "15 MAR 1990"}
+        Group1.g_IndiDict["@I12@"] = {"BIRT": "10 DEC 1995"}
+        Group1.g_FamDict["@F3@"] = {"HUSB": "@I9@", "WIFE": "@I10@", "CHIL": ["@I11@", "@I12@"]}
+        errors = Group1.US12Validation()
+        self.assertFalse(StringListErrorSearch("Error US12:", "(@I11@)", errors))
+        self.assertFalse(StringListErrorSearch("Error US12:", "(@I12@)", errors))
+
+    def test_US12_invalid_mother_age_difference(self):
+        Group1.g_IndiDict["@I13@"] = {"BIRT": "20 JUN 1920", "SEX": "F"}  # Adjusted birth date to create error
+        Group1.g_IndiDict["@I14@"] = {"BIRT": "22 APR 1985"}
+        Group1.g_FamDict["@F4@"] = {"HUSB": "@I9@", "WIFE": "@I13@", "CHIL": ["@I14@"]}
+        errors = Group1.US12Validation()
+        self.assertTrue(StringListErrorSearch("Error US12:", "(@I14@)", errors))
+
+    def test_US12_invalid_father_age_difference(self):
+        Group1.g_IndiDict["@I15@"] = {"BIRT": "01 JAN 1900", "SEX": "M"}  # Adjusted birth date to create error
+        Group1.g_IndiDict["@I16@"] = {"BIRT": "20 JUN 1960", "SEX": "F"}
+        Group1.g_IndiDict["@I17@"] = {"BIRT": "22 APR 1985"}
+        Group1.g_FamDict["@F5@"] = {"HUSB": "@I15@", "WIFE": "@I16@", "CHIL": ["@I17@"]}
+        errors = Group1.US12Validation()
+        self.assertTrue(StringListErrorSearch("Error US12:", "(@I17@)", errors))
+        
     # US15 Tests
     def test_US15_01_child(self):
         Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": "@I01@"}

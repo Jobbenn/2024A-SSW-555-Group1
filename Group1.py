@@ -301,6 +301,32 @@ def US08Validation():
                     errors.append(f"Error US08: {child_name} ({child_id}) has no recorded marriage date for parents in family ({fam_id})")
 
     return errors
+# US12 Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
+def US12Validation():
+    errors = []
+    
+    for fam_id in g_FamDict.keys():
+        if "HUSB" in g_FamDict[fam_id] and "WIFE" in g_FamDict[fam_id] and "CHIL" in g_FamDict[fam_id]:
+            husband_id = g_FamDict[fam_id]["HUSB"]
+            wife_id = g_FamDict[fam_id]["WIFE"]
+
+            if husband_id in g_IndiDict and wife_id in g_IndiDict:
+                husband_birth_date = datetime.strptime(g_IndiDict[husband_id]["BIRT"], "%d %b %Y")
+                wife_birth_date = datetime.strptime(g_IndiDict[wife_id]["BIRT"], "%d %b %Y")
+
+                for child_id in g_FamDict[fam_id]["CHIL"]:
+                    if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
+                        child_birth_date = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
+                        mother_age_at_birth = (child_birth_date - wife_birth_date).days / 365.25
+                        father_age_at_birth = (child_birth_date - husband_birth_date).days / 365.25
+
+                        if mother_age_at_birth >= 60:
+                            errors.append(f"Error US12: Mother ({wife_id}) in family ({fam_id}) is more than 60 years older than child ({child_id}).")
+
+                        if father_age_at_birth >= 80:
+                            errors.append(f"Error US12: Father ({husband_id}) in family ({fam_id}) is more than 80 years older than child ({child_id}).")
+    
+    return errors
 
 # US15 There should be fewer than 15 siblings in a family
 def US15Validation():
@@ -564,8 +590,4 @@ if __name__ == '__main__':
     BuildTables()
     PrintTables()
     
-__all__ = [
-    'US01Validation', 'US02Validation', 'US03Validation', 'US04Validation',
-    'US05Validation', 'US06Validation', 'US07Validation', 'US08Validation',
-    'g_IndiDict', 'g_FamDict', 'AppendDictStr'
-]
+
