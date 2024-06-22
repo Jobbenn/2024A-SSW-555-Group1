@@ -388,6 +388,26 @@ def US12Validation():
     
     return errors
 
+# US13 Birth dates of siblings should be more than 8 months apart or less than 2 days apart (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)
+def US13Validation():
+    errors = []
+    
+    for fam_id, family in g_FamDict.items():
+        if "CHIL" in family:
+            sibling_birth_dates = []
+            for child_id in family['CHIL']:
+                if child_id in g_IndiDict and g_IndiDict[child_id] and g_IndiDict[child_id]["BIRT"] != "@":
+                    birthdate = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
+                    sibling_birth_dates.append((child_id, birthdate))
+            
+            sibling_birth_dates.sort(key=lambda x: x[1])
+            
+            for i in range(len(sibling_birth_dates) - 1):
+                diff_days = (sibling_birth_dates[i + 1][1] - sibling_birth_dates[i][1]).days
+                if not (diff_days < 2 or diff_days >= 8 * 30):
+                    errors.append(f"Error US13: Sibling birth dates in family ({fam_id}) are not sufficiently spaced: {sibling_birth_dates[i][0]} and {sibling_birth_dates[i + 1][0]}.")
+    return errors            
+
 # US15 There should be fewer than 15 siblings in a family
 def US15Validation():
     errors = []
@@ -460,7 +480,8 @@ def DataValidation():
     errorQueue.append(US06Validation())
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
-    errorQueue.append(US10Validation())
+    errorQueue.append(US12Validation())
+    errorQueue.append(US13Validation())
     errorQueue.append(US15Validation())
     errorQueue.append(US21Validation())
 
