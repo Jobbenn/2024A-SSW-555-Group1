@@ -301,6 +301,35 @@ def US08Validation():
                     errors.append(f"Error US08: {child_name} ({child_id}) has no recorded marriage date for parents in family ({fam_id})")
 
     return errors
+
+def US10Validation():
+    errors = []
+
+    for aFam in g_FamDict.keys():
+        marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+
+        theWife = g_FamDict[aFam]["WIFE"]
+        theHusb = g_FamDict[aFam]["HUSB"]
+
+        theWifeName = g_IndiDict[theWife]["NAME"]
+        theHusbName = g_IndiDict[theHusb]["NAME"]
+
+        if theWife in g_IndiDict and "BIRT" in g_IndiDict[theWife]:
+
+            wifeBirthDT = datetime.strptime(g_IndiDict[theWife]["BIRT"], "%d %b %Y")
+            if calculate_age(wifeBirthDT,marriageDT):
+                errors.append(f"Anomalyt US10: Age of {theWife} ({theWife}) is less than 14" + \
+                                f" at the time of her marriage to {theHusbName} ({theHusb}).")
+
+        if theHusb in g_IndiDict and "DEAT" in g_IndiDict[theHusb]:
+
+            husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
+            if calculate_age(husbBirthDT,marriageDT):
+                errors.append(f"Anomalyt US10: Age of {theHusb} ({theHusb}) is less than 14" + \
+                                f" at the time of his marriage to {theWifeName} ({theWife}).")
+    
+    return errors
+
 # US12 Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
 def US12Validation():
     errors = []
@@ -400,6 +429,7 @@ def DataValidation():
     errorQueue.append(US06Validation())
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
+    errorQueue.append(US10Validation())
     errorQueue.append(US15Validation())
     errorQueue.append(US21Validation())
 
