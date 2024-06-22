@@ -290,14 +290,15 @@ def US08Validation():
                 if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
                     birth_date = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
                     # Emphasize birth before marriage
-                    if birth_date < marriageDT:
+                    if birth_date <= marriageDT:
                         #AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family {fam_id}", "\n")
-                        errors.append(f"Error US08: {g_IndiDict[child_id]['NAME']} ({child_id}) born before parents' marriage in family ({fam_id}).")
+                        child_name = g_IndiDict[child_id].get('NAME', "Unknown")
+                        errors.append(f"Error US08: {child_name} ({child_id}) born before or on the same day as parents' marriage in family ({fam_id}).")
         else:
             for child_id in g_FamDict[fam_id].get("CHIL", []):
                 if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
-                    #AppendDictStr("ERROR", g_FamDict[fam_id], f"ERROR: US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family {fam_id}", "\n")
-                    errors.append(f"Error US08: {g_IndiDict[child_id]['NAME']} ({child_id}) has no recorded marriage date for parents in family ({fam_id})")
+                    child_name = g_IndiDict[child_id].get("NAME","Unknown")
+                    errors.append(f"Error US08: {child_name} ({child_id}) has no recorded marriage date for parents in family ({fam_id})")
 
     return errors
 

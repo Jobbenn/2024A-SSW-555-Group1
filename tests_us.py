@@ -10,8 +10,6 @@ def StringListErrorSearch(prefixStr, idStr, errorList):
             return True
     return False
 
-# Run test with : 
-#  python -m unittest discover -s tests -p 'tests_us.py'
 class TestValidationFunctions(unittest.TestCase):
     # US01 Tests
     def test_US01_valid_dates(self):
@@ -152,7 +150,7 @@ class TestValidationFunctions(unittest.TestCase):
         Group1.g_IndiDict["@I20@"] = {"BIRT": "01 JAN 1980", "DEAT": "01 JAN 2000"}
         Group1.g_FamDict["@F15@"] = {"MARR": "01 JAN 2000", "HUSB": "@I20@", "WIFE": "@I21@"}
         errors = Group1.US05Validation()
-        self.assertTrue(StringListErrorSearch("Error US05:", "(@F15@)", errors))
+        self.assertTrue(StringListErrorSearch("Error US05:", "(@I20@)", errors))
 
     # US06 Tests
     def test_US06_valid_divorce_before_death(self):
@@ -183,7 +181,7 @@ class TestValidationFunctions(unittest.TestCase):
         Group1.g_IndiDict["@I25@"] = {"BIRT": "01 JAN 1980", "DEAT": "01 JAN 2000"}
         Group1.g_FamDict["@F20@"] = {"DIV": "01 JAN 2000", "HUSB": "@I25@", "WIFE": "@I26@"}
         errors = Group1.US06Validation()
-        self.assertTrue(StringListErrorSearch("Error US06:", "(@F20@)", errors))
+        self.assertTrue(StringListErrorSearch("Error US06:", "(@I25@)", errors))
 
     # US07 Tests
     def test_US07_valid_age_less_than_150_years_deceased(self):
@@ -231,14 +229,14 @@ class TestValidationFunctions(unittest.TestCase):
         self.assertFalse(StringListErrorSearch("Error US08:", "(@I37@)", errors))
 
     def test_US08_invalid_birth_before_marriage(self):
-        Group1.g_IndiDict["@I40@"] = {"BIRT": "01 JAN 1980"}
-        Group1.g_FamDict["@F24@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": "@I40@"}
+        Group1.g_IndiDict["@I40@"] = {"BIRT": "01 JAN 1980", "NAME": "Child"}
+        Group1.g_FamDict["@F24@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": ["@I40@"]}
         errors = Group1.US08Validation()
         self.assertTrue(StringListErrorSearch("Error US08:", "(@I40@)", errors))
 
     def test_US08_invalid_birth_same_day_as_marriage(self):
-        Group1.g_IndiDict["@I43@"] = {"BIRT": "01 JAN 2000"}
-        Group1.g_FamDict["@F25@"] = {"MARR": "01 JAN 2000", "HUSB": "@I44@", "WIFE": "@I45@", "CHIL": "@I43@"}
+        Group1.g_IndiDict["@I43@"] = {"BIRT": "01 JAN 2000", "NAME": "Child"}
+        Group1.g_FamDict["@F30@"] = {"MARR": "01 JAN 2000", "HUSB": "@I16@", "WIFE": "@I17@", "CHIL": ["@I43@"]}
         errors = Group1.US08Validation()
         self.assertTrue(StringListErrorSearch("Error US08:", "(@I43@)", errors))
 
