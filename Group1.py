@@ -354,9 +354,9 @@ def US10Validation():
                 errors.append(f"Anomaly US10: Age of {theWife} ({theWife}) is less than 14" + \
                                 f" at the time of her marriage to {theHusbName} ({theHusb}).")
 
-        if theHusb in g_IndiDict and "DEAT" in g_IndiDict[theHusb]:
+        if theHusb in g_IndiDict and "BIRT" in g_IndiDict[theHusb]:
 
-            husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["DEAT"], "%d %b %Y")
+            husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["BIRT"], "%d %b %Y")
             if calculate_age(husbBirthDT,marriageDT) < 14:
                 errors.append(f"Anomaly US10: Age of {theHusb} ({theHusb}) is less than 14" + \
                                 f" at the time of his marriage to {theWifeName} ({theWife}).")
