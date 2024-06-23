@@ -334,6 +334,7 @@ def US09Validation():
                     errors.append(f"Error US09: Child {child_id} born more than 9 months after father's death.")
     return errors
 
+# US10 No marriage before 14
 def US10Validation():
     errors = []
 
