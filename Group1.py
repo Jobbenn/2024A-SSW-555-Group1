@@ -339,28 +339,34 @@ def US10Validation():
     errors = []
 
     for aFam in g_FamDict.keys():
-        marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+        if "MARR" in g_FamDict[aFam]:
+            marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+            marriageStr = marriageDT.strftime("%d %b %Y")
+            
+            if "WIFE" in g_FamDict[aFam] and "HUSB" in g_FamDict[aFam]:
+                theWife = g_FamDict[aFam]["WIFE"]
+                theHusb = g_FamDict[aFam]["HUSB"]
 
-        theWife = g_FamDict[aFam]["WIFE"]
-        theHusb = g_FamDict[aFam]["HUSB"]
+                if theWife in g_IndiDict and "BIRT" in g_IndiDict[theWife]:
+                    wifeBirthDT = datetime.strptime(g_IndiDict[theWife]["BIRT"], "%d %b %Y")
+                    wifeBirthStr = wifeBirthDT.strftime("%d %b %Y")
+                    
+                    if calculate_age(wifeBirthStr,marriageStr) < 14:
+                        theWifeName = g_IndiDict[theWife].get("NAME", "Unknown")
+                        theHusbName = g_IndiDict[theHusb].get("NAME", "Unknown")                    
+                        errors.append(f"Anomaly US10: Age of {theWife} ({theWife}) is less than 14" + \
+                                        f" at the time of her marriage to {theHusbName} ({theHusb}).")
 
-        theWifeName = g_IndiDict[theWife]["NAME"]
-        theHusbName = g_IndiDict[theHusb]["NAME"]
-
-        if theWife in g_IndiDict and "BIRT" in g_IndiDict[theWife]:
-
-            wifeBirthDT = datetime.strptime(g_IndiDict[theWife]["BIRT"], "%d %b %Y")
-            if calculate_age(wifeBirthDT,marriageDT) < 14:
-                errors.append(f"Anomaly US10: Age of {theWife} ({theWife}) is less than 14" + \
-                                f" at the time of her marriage to {theHusbName} ({theHusb}).")
-
-        if theHusb in g_IndiDict and "BIRT" in g_IndiDict[theHusb]:
-
-            husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["BIRT"], "%d %b %Y")
-            if calculate_age(husbBirthDT,marriageDT) < 14:
-                errors.append(f"Anomaly US10: Age of {theHusb} ({theHusb}) is less than 14" + \
-                                f" at the time of his marriage to {theWifeName} ({theWife}).")
-    
+                if theHusb in g_IndiDict and "BIRT" in g_IndiDict[theHusb]:
+                    husbBirthDT = datetime.strptime(g_IndiDict[theHusb]["BIRT"], "%d %b %Y")
+                    husbBirthStr = husbBirthDT.strftime("%d %b %Y")
+                    
+                    if calculate_age(husbBirthStr,marriageStr) < 14:
+                        theWifeName = g_IndiDict[theWife].get("NAME", "Unknown")
+                        theHusbName = g_IndiDict[theHusb].get("NAME", "Unknown")
+                        errors.append(f"Anomaly US10: Age of {theHusb} ({theHusb}) is less than 14" + \
+                                        f" at the time of his marriage to {theWifeName} ({theWife}).")
+            
     return errors
 
 # US12 Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
