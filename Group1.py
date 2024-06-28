@@ -416,6 +416,47 @@ def US13Validation():
                     errors.append(f"Error US13: Sibling birth dates in family ({fam_id}) are not sufficiently spaced: {sibling_birth_dates[i][0]} and {sibling_birth_dates[i + 1][0]}.")
     return errors            
 
+# US14 No more than 5 siblings should be born at the same time
+def US14Validation():
+
+    # g_IndiDict["@I52@"] = {"BIRT": "01 JAN 2002"}
+    # g_IndiDict["@I53@"] = {"BIRT": "01 JAN 2002"}
+    # g_IndiDict["@I54@"] = {"BIRT": "01 JAN 2002"}
+    # g_IndiDict["@I55@"] = {"BIRT": "01 JAN 2002"}
+    # g_IndiDict["@I56@"] = {"BIRT": "01 JAN 2002"}
+    # g_IndiDict["@I57@"] = {"BIRT": "02 MAR 2007"}
+    # g_FamDict["@F55@"] = {"CHIL": ["@I52@", "@I53@", "@I54@", "@I55@", "@I56@", "@I57@"]}
+
+    errors = []
+
+    for aFam in g_FamDict.keys():
+
+        valid_siblings = True
+    
+        if 'CHIL' in g_FamDict[aFam]:
+
+            if len(g_FamDict[aFam]['CHIL']) >= 5:
+
+                birthdays = []
+
+                # for child in children
+                try:
+                    for indi_id in g_FamDict[aFam]['CHIL']:
+                        if 'BIRT' in g_IndiDict[indi_id].keys():
+                            birth = datetime.strptime(g_IndiDict[indi_id]["BIRT"], "%d %b %Y")
+                            birthdays.append(birth)
+
+                            if birthdays.count(birth) >= 5:
+                                valid_siblings = False
+                except:
+                    #except to catch Key Error: '@'
+                    pass
+
+        if not valid_siblings:
+            errors.append(f"Anomaly US14: 5 or more siblings in family {aFam} were born at the same time.")
+    
+    return errors
+
 # US15 There should be fewer than 15 siblings in a family
 def US15Validation():
     errors = []
@@ -491,6 +532,7 @@ def DataValidation():
     errorQueue.append(US09Validation())
     errorQueue.append(US12Validation())
     errorQueue.append(US13Validation())
+    errorQueue.append(US14Validation())
     errorQueue.append(US15Validation())
     errorQueue.append(US21Validation())
 
