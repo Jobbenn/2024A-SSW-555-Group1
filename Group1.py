@@ -304,34 +304,41 @@ def US08Validation():
 
 #09 Birth before death of parents
 def US09Validation():
+    errors = []
     for aFam in g_FamDict.keys():
-        marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+        if "MARR" in g_FamDict[aFam]:
+            marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
 
         theWife = g_FamDict[aFam]["WIFE"]
         theHusb = g_FamDict[aFam]["HUSB"]
 
-        theWifeName = g_IndiDict[theWife]["NAME"]
-        theHusbName = g_IndiDict[theHusb]["NAME"]
-
-        if husband_id:
-            father_death = g_IndiDict[husband_id].get('DEAT')
+        if theHusb:
+            father_death = g_IndiDict[theHusb].get('DEAT')
             if father_death:
-                father_death_date = parse_gedcom_date(father_death)
+             father_death_date = parse_gedcom_date(father_death) # type: ignore
+            else:
+                father_death_date = None
 
-        if wife_id:
-            mother_death = g_IndiDict[wife_id].get('DEAT')
+        if theWife:
+            mother_death = g_IndiDict[theWife].get('DEAT')
             if mother_death:
-                mother_death_date = parse_gedcom_date(mother_death)
+                mother_death_date = parse_gedcom_date(mother_death) # type: ignore
+            else:
+                mother_death_date = None
 
-        for child_id in font_family_aliases.get('CHIL', []):
-            birth_date_str = g_IndiDict[child_id].get('BIRT')
-            if birth_date_str:
-                
-                birth_date = parse_gedcom_date(birth_date_str)
-                if mother_death_date and birth_date > mother_death_date:
-                    errors.append(f"Error US09: Child {child_id} born after mother's death.")
-                if father_death_date and birth_date > father_death_date + timedelta(days=9*30):
-                    errors.append(f"Error US09: Child {child_id} born more than 9 months after father's death.")
+        if "CHIL" in g_FamDict[aFam]:
+            for child_id in g_FamDict[aFam]["CHIL"]:
+                if child_id in g_IndiDict:
+                    birth_date_str = g_IndiDict[child_id].get("BIRT")
+                    if birth_date_str:
+                        birth_date = parse_gedcom_date(birth_date_str) # type: ignore
+                        if mother_death_date and birth_date > mother_death_date:
+                            errors.append(f"Error US09: Child {child_id} born after mother's death.")
+                        if father_death_date and birth_date > father_death_date + timedelta(days=9*30):
+                            errors.append(f"Error US09: Child {child_id} born more than 9 months after father's death.")
+                else:
+                    print(f"Debug: Child ID {child_id} not found in individual dictionary.")
+                    errors.append(f"Error US09: Child ID {child_id} not found in individual dictionary.")
     return errors
 
 # US10 No marriage before 14
@@ -547,6 +554,70 @@ def DataValidation():
 # File & Field Parsing Functions
 #-------------------------------------------------------------------------------
 
+def ParseData(inFile):
+    indID  = ""
+    famID  = ""
+
+    with open(inFile, 'r') as fileData:
+        inputLine = fileData.readline()
+
+        while len(inputLine) > 0: 
+      
+            strLevel, strTag, strData = ParseFields(inputLine)
+
+            #Removing @ symbols and slashes from string data
+            strData = strData.replace('@', '')
+            strData = strData.replace('/', '')
+
+            #Individuals Top Level
+            if "0" == strLevel and "INDI" == strTag:
+                #Close last tag (*)
+                famID = ""
+                #Generate a new dictionary entry for the new individual
+                indID = strData
+                g_IndiDict[indID] = {}
+
+            #Families Top Level
+            elif "0" == strLevel and "FAM" == strTag:
+                
+                indID = ""
+                
+                famID = strData
+                g_FamDict[famID] = {}
+
+            elif "1" == strLevel and ("" != indID or "" != famID):
+                
+                if strTag in ["BIRT", "DEAT", "MARR", "DIV"]:
+                    
+                    inputLine = fileData.readline()
+                    strLevel2, strTag2, strData2 = ParseFields(inputLine)
+
+                    if "2" == strLevel2 and "DATE" == strTag2:
+                        if "" != indID:
+                            g_IndiDict[indID][strTag] = strData2
+                        elif "" != famID:
+                            g_FamDict[famID][strTag] = strData2
+                    else:
+                        #Format error!
+                        pass
+                    
+                elif "CHIL" == strTag:
+                    if "CHIL" in g_FamDict[famID]:
+                        g_FamDict[famID]["CHIL"].append(strData)
+                    else:
+                        g_FamDict[famID]["CHIL"] = [strData]
+                        
+                elif strTag in lstValidTags:
+                    if "" != indID:
+                        g_IndiDict[indID][strTag] = strData
+                    elif "" != famID:
+                        g_FamDict[famID][strTag] = strData
+                else:
+                    #Format error!
+                    pass
+
+            inputLine = fileData.readline()
+
 def ParseFields(inLine):
     dataList = inLine.split(" ")
 
@@ -719,7 +790,6 @@ def PrintTables():
 
 if __name__ == '__main__':
     ParseData('Group1.ged')
-    DataValidation()
     BuildTables()
     PrintTables()
     
