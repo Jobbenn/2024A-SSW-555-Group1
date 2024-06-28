@@ -303,7 +303,7 @@ def US08Validation():
     return errors
 
 #09 Birth before death of parents
-# def US09Validation():
+def US09Validation():
     for aFam in g_FamDict.keys():
         marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
 
@@ -529,7 +529,7 @@ def DataValidation():
     errorQueue.append(US06Validation())
     errorQueue.append(US07Validation())
     errorQueue.append(US08Validation())
-    # errorQueue.append(US09Validation())
+    errorQueue.append(US09Validation())
     errorQueue.append(US12Validation())
     errorQueue.append(US13Validation())
     errorQueue.append(US14Validation())
@@ -720,7 +720,7 @@ def PrintTables():
 if __name__ == '__main__':
     ParseData('Group1.ged')
     DataValidation()
-    # BuildTables()
-    # PrintTables()
+    BuildTables()
+    PrintTables()
     
 
