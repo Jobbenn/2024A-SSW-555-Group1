@@ -57,7 +57,19 @@ def calculate_age(birth_date, death_date=None):
     else:
         end_dt = datetime.today()
     return AgeDateTimeCalc(birth_dt, end_dt)
-        
+
+def get_individual_birth_date(individual_id):
+    if individual_id in g_IndiDict and "BIRT" in g_IndiDict[individual_id]:
+        return datetime.strptime(g_IndiDict[individual_id]["BIRT"], "%d %b %Y")
+    return None
+
+def validate_parent_child_age_difference(parent_id, child_birth_date, max_age_difference):
+    parent_birth_date = get_individual_birth_date(parent_id)
+    if parent_birth_date:
+        age_at_birth = (child_birth_date - parent_birth_date).days / 365.25
+        return age_at_birth < max_age_difference
+    return True
+
 #-------------------------------------------------------------------------------
 
 
@@ -381,25 +393,18 @@ def US12Validation():
     errors = []
     
     for fam_id in g_FamDict.keys():
-        if "HUSB" in g_FamDict[fam_id] and "WIFE" in g_FamDict[fam_id] and "CHIL" in g_FamDict[fam_id]:
-            husband_id = g_FamDict[fam_id]["HUSB"]
-            wife_id = g_FamDict[fam_id]["WIFE"]
+        family = g_FamDict[fam_id]
+        if "HUSB" in family and "WIFE" in family and "CHIL" in family:
+            husband_id = family["HUSB"]
+            wife_id = family["WIFE"]
 
-            if husband_id in g_IndiDict and wife_id in g_IndiDict:
-                husband_birth_date = datetime.strptime(g_IndiDict[husband_id]["BIRT"], "%d %b %Y")
-                wife_birth_date = datetime.strptime(g_IndiDict[wife_id]["BIRT"], "%d %b %Y")
-
-                for child_id in g_FamDict[fam_id]["CHIL"]:
-                    if child_id in g_IndiDict and "BIRT" in g_IndiDict[child_id]:
-                        child_birth_date = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
-                        mother_age_at_birth = (child_birth_date - wife_birth_date).days / 365.25
-                        father_age_at_birth = (child_birth_date - husband_birth_date).days / 365.25
-
-                        if mother_age_at_birth >= 60:
-                            errors.append(f"Error US12: Mother ({wife_id}) in family ({fam_id}) is more than 60 years older than child ({child_id}).")
-
-                        if father_age_at_birth >= 80:
-                            errors.append(f"Error US12: Father ({husband_id}) in family ({fam_id}) is more than 80 years older than child ({child_id}).")
+            for child_id in family["CHIL"]:
+                child_birth_date = get_individual_birth_date(child_id)
+                if child_birth_date:
+                    if not validate_parent_child_age_difference(wife_id, child_birth_date, 60):
+                        errors.append(f"Error US12: Mother ({wife_id}) in family ({fam_id}) is more than 60 years older than child ({child_id}).")
+                    if not validate_parent_child_age_difference(husband_id, child_birth_date, 80):
+                        errors.append(f"Error US12: Father ({husband_id}) in family ({fam_id}) is more than 80 years older than child ({child_id}).")
     
     return errors
 
@@ -411,8 +416,8 @@ def US13Validation():
         if "CHIL" in family:
             sibling_birth_dates = []
             for child_id in family['CHIL']:
-                if child_id in g_IndiDict and g_IndiDict[child_id] and g_IndiDict[child_id]["BIRT"] != "@":
-                    birthdate = datetime.strptime(g_IndiDict[child_id]["BIRT"], "%d %b %Y")
+                birthdate = get_individual_birth_date(child_id)
+                if birthdate:
                     sibling_birth_dates.append((child_id, birthdate))
             
             sibling_birth_dates.sort(key=lambda x: x[1])
@@ -421,7 +426,7 @@ def US13Validation():
                 diff_days = (sibling_birth_dates[i + 1][1] - sibling_birth_dates[i][1]).days
                 if not (diff_days < 2 or diff_days >= 8 * 30):
                     errors.append(f"Error US13: Sibling birth dates in family ({fam_id}) are not sufficiently spaced: {sibling_birth_dates[i][0]} and {sibling_birth_dates[i + 1][0]}.")
-    return errors            
+    return errors
 
 # US14 No more than 5 siblings should be born at the same time
 def US14Validation():
