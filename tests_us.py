@@ -376,7 +376,30 @@ class TestValidationFunctions(unittest.TestCase):
         Group1.g_FamDict["@F5@"] = {"CHIL": ["@I10@", "@I11@"]}
         errors = Group1.US13Validation()
         self.assertTrue(StringListErrorSearch("Error US13:", "@F5@", errors))
-        
+    
+    # US14 Tests
+    def test_US14_5_siblings_same_birth(self):
+        Group1.g_IndiDict["@I2@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I3@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I4@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I5@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I6@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I7@"] = {"BIRT": "02 MAR 2007"}
+        Group1.g_FamDict["@F1@"] = {"CHIL": ["@I2@", "@I3@", "@I4@", "@I5@", "@I6@", "@I7@"]}
+        errors = Group1.US14Validation()
+        self.assertTrue(StringListErrorSearch("Anomaly US14:", "F1", errors))
+    
+    def test_US14_5_siblings_same_birth_false(self):
+        Group1.g_IndiDict["@I2@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I3@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I4@"] = {"BIRT": "01 JAN 2003"}
+        Group1.g_IndiDict["@I5@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I6@"] = {"BIRT": "01 JAN 2002"}
+        Group1.g_IndiDict["@I7@"] = {"BIRT": "02 MAR 2007"}
+        Group1.g_FamDict["@F1@"] = {"CHIL": ["@I2@", "@I3@", "@I4@", "@I5@", "@I6@", "@I7@"]}
+        errors = Group1.US14Validation()
+        self.assertFalse(StringListErrorSearch("Anomaly US14:", "F1", errors))
+
     # US15 Tests
     def test_US15_01_child(self):
         Group1.g_FamDict["@F99@"] = {"MARR": "01 JAN 1990", "HUSB": "@I41@", "WIFE": "@I42@", "CHIL": "@I01@"}
