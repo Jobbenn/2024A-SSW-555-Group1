@@ -1,42 +1,46 @@
-Python 3.9.2 (tags/v3.9.2:1a79785, Feb 19 2021, 13:44:55) [MSC v.1928 64 bit (AMD64)] on win32
-Type "help", "copyright", "credits" or "license()" for more information.
->>> 
 ============== RESTART: D:\SSW555\2024A-SSW-555-Group1\tests_us.py =============
-.....................F....F........FF...
+........................................EEEE........................
 ======================================================================
-FAIL: test_US05_invalid_death_same_day_as_marriage (__main__.TestValidationFunctions)
+ERROR: test_US09_child_after_father_death (__main__.TestValidationFunctions)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 155, in test_US05_invalid_death_same_day_as_marriage
-    self.assertTrue(StringListErrorSearch("Error US05:", "(@F15@)", errors))
-AssertionError: False is not true
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 274, in test_US09_child_after_father_death
+    errors = Group1.US09Validation()
+  File "D:\SSW555\2024A-SSW-555-Group1\Group1.py", line 330, in US09Validation
+    father_death_date = parse_gedcom_date(father_death) # type: ignore
+NameError: name 'parse_gedcom_date' is not defined
 
 ======================================================================
-FAIL: test_US06_invalid_death_same_day_as_divorce (__main__.TestValidationFunctions)
+ERROR: test_US09_child_after_mother_death (__main__.TestValidationFunctions)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 186, in test_US06_invalid_death_same_day_as_divorce
-    self.assertTrue(StringListErrorSearch("Error US06:", "(@F20@)", errors))
-AssertionError: False is not true
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 265, in test_US09_child_after_mother_death
+    errors = Group1.US09Validation()
+  File "D:\SSW555\2024A-SSW-555-Group1\Group1.py", line 330, in US09Validation
+    father_death_date = parse_gedcom_date(father_death) # type: ignore
+NameError: name 'parse_gedcom_date' is not defined
 
 ======================================================================
-FAIL: test_US08_invalid_birth_before_marriage (__main__.TestValidationFunctions)
+ERROR: test_US09_child_before_parents_death (__main__.TestValidationFunctions)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 237, in test_US08_invalid_birth_before_marriage
-    self.assertTrue(StringListErrorSearch("Error US08:", "(@I40@)", errors))
-AssertionError: False is not true
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 256, in test_US09_child_before_parents_death
+    errors = Group1.US09Validation()
+  File "D:\SSW555\2024A-SSW-555-Group1\Group1.py", line 330, in US09Validation
+    father_death_date = parse_gedcom_date(father_death) # type: ignore
+NameError: name 'parse_gedcom_date' is not defined
 
 ======================================================================
-FAIL: test_US08_invalid_birth_same_day_as_marriage (__main__.TestValidationFunctions)
+ERROR: test_US09_child_before_parents_death_2 (__main__.TestValidationFunctions)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 243, in test_US08_invalid_birth_same_day_as_marriage
-    self.assertTrue(StringListErrorSearch("Error US08:", "(@I43@)", errors))
-AssertionError: False is not true
+  File "D:\SSW555\2024A-SSW-555-Group1\tests_us.py", line 284, in test_US09_child_before_parents_death_2
+    errors = Group1.US09Validation()
+  File "D:\SSW555\2024A-SSW-555-Group1\Group1.py", line 330, in US09Validation
+    father_death_date = parse_gedcom_date(father_death) # type: ignore
+NameError: name 'parse_gedcom_date' is not defined
 
 ----------------------------------------------------------------------
-Ran 40 tests in 0.163s
+Ran 68 tests in 0.144s
 
-FAILED (failures=4)
->>> 
+FAILED (errors=4)

@@ -524,6 +524,21 @@ def US21Validation():
     
     return errors
 
+def US22Validation():
+    errors = []
+    valid = True
+
+    #Dictionaries don't allow duplicate keys, so we'll verify that the fam and indi dicts don't have duplicate keys
+    for aKey in g_IndiDict.keys():
+        if aKey in g_FamDict.keys():
+            valid = False
+
+    if not valid:
+        errors.append("Error US22: duplicate keys found between g_IndiDict and g_FamDict!\n")
+
+    return errors
+    
+
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
     for list in stringListList:
@@ -547,6 +562,7 @@ def DataValidation():
     errorQueue.append(US14Validation())
     errorQueue.append(US15Validation())
     errorQueue.append(US21Validation())
+    errorQueue.append(US22Validation())
 
     printQueue(errorQueue)
     
