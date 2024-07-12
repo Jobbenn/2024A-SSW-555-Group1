@@ -801,56 +801,8 @@ def PrintTables():
     print("Families")
     print(g_FamiliesTable)
 
-    print("\n\n")
-
 #-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
-# List User Story Functions
-#-------------------------------------------------------------------------------
-
-def List_US29():
-    deadList = []
-    
-    for anIndiID in g_IndiDict.keys():
-        if "DEAT" in g_IndiDict[anIndiID]:
-            deadList.append(g_IndiDict[anIndiID]["NAME"])
-
-    deadList = list(set(deadList))
-
-    print("List of all deceased individuals:")
-    print(deadList)
-    print("\n")
-    
-            
-def List_US30():
-    liveMarried = []
-
-    for aFamID in g_FamDict.keys():
-        husbID = g_FamDict[aFamID]["HUSB"]
-        wifeID = g_FamDict[aFamID]["WIFE"]
-
-        indiKeys = g_IndiDict.keys()
-
-        if husbID in indiKeys:
-            if "DEAT" not in g_IndiDict[husbID]:
-                liveMarried.append(g_IndiDict[husbID]["NAME"])
-
-        if wifeID in indiKeys:
-            if "DEAT" not in g_IndiDict[wifeID]:
-                liveMarried.append(g_IndiDict[wifeID]["NAME"])
-
-    liveMarried = list(set(liveMarried))
-
-    print("List of all living and married individuals:")
-    print(liveMarried)
-    print("\n")
-
-
-def PrintLists():
-    List_US29()
-    List_US30()
-    #...
 
 #-------------------------------------------------------------------------------
 # Main
@@ -861,6 +813,5 @@ if __name__ == '__main__':
     ParseData('Group1.ged')
     BuildTables()
     PrintTables()
-    PrintLists()
     
 
