@@ -477,5 +477,19 @@ class TestValidationFunctions(unittest.TestCase):
         errors = Group1.US22Validation()
         self.assertTrue(StringListErrorStarts("Error US22:", errors))
 
+    # US24 Tests
+    def test_US24_Duplicates(self):
+        Group1.g_FamDict["@F23@"] = {"MARR": "01 JAN 1990", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F24@"] = {"MARR": "01 JAN 1991", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F25@"] = {"MARR": "01 JAN 1990", "HUSB": "@I1@", "WIFE": "@I3@"}
+        errors = Group1.US24Validation()
+        self.assertTrue(StringListErrorStarts("Error US24:", errors))
+    
+    def test_US24_No_Duplicates(self):
+        Group1.g_FamDict["@F23@"] = {"MARR": "01 JAN 1990", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F24@"] = {"MARR": "01 JAN 1991", "HUSB": "@I1@", "WIFE": "@I3@"}
+        errors = Group1.US24Validation()
+        self.assertFalse(StringListErrorStarts("Error US24:", errors))
+
 if __name__ == '__main__':
     unittest.main()

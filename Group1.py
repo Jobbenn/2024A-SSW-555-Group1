@@ -538,6 +538,8 @@ def US22Validation():
 
     return errors
     
+def US24Validation():
+    pass
 
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
