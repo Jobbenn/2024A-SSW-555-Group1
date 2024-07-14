@@ -989,6 +989,7 @@ def List_US31():
     print("List of all living and single individuals:")
     print(liveSingle)
     print("\n")
+
     return liveSingle
 
 def List_US32():
@@ -1014,7 +1015,6 @@ def List_US32():
         for birth_date, siblings in birth_info:
             print(f"Family {fam_id} has multiple births on {birth_date}: {', '.join(siblings)}")
     print("\n")
-
     return multiple_births
     
 def PrintLists():
