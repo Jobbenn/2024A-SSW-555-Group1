@@ -490,6 +490,112 @@ class TestValidationFunctions(unittest.TestCase):
         Group1.g_FamDict["@F92@"] = {"MARR": "04 MAY 1998", "HUSB": "@I1@", "WIFE": "@I3@"}
         errors = Group1.US24Validation()
         self.assertFalse(StringListErrorSearch("Error US24:", "04 MAY 1997", errors))
+    
+    # US26 Tests
+    def test_US26_FAMC_No_CHIL(self):
+        Group1.g_IndiDict["@I53@"] = {"BIRT": "01 JAN 2000", "SEX":"M", "FAMC": "@F93@"}
+        Group1.g_FamDict["@F93@"] = {"MARR": "04 MAY 1994", "HUSB": "@I1@", "WIFE": "@I3@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertTrue(StringListErrorSearch("Error US26:", "@I53@", errors))
+    
+    def test_US26_FAMC_No_Spouse(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        
+        Group1.g_IndiDict["@I53@"] = {"BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F93@"}
+        Group1.g_FamDict["@F93@"] = {"MARR": "04 MAY 1994", "HUSB": "@I1@", "WIFE": "@I2@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertTrue(StringListErrorSearch("Error US26:", "@I53@", errors))
+    
+    def test_US26_FAMC_Yes_Spouse(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_FamDict["@F94@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertFalse(StringListErrorSearch("Error US26:", "@I54@", errors))
+    
+    def test_US26_HUSB_No_FAMS(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        
+        Group1.g_IndiDict = {}
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F77@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMS": "@F94@"}
+        Group1.g_FamDict["@F94@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertTrue(StringListErrorSearch("Error US26:", "@F94@", errors))
+    
+    def test_US26_HUSB_Yes_FAMS(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        
+        Group1.g_IndiDict = {}
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMS": "@F94@"}
+        Group1.g_FamDict["@F94@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertFalse(StringListErrorSearch("Error US26:", "@F94@", errors))
+    
+    def test_US26_WIFE_No_FAMS(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        
+        Group1.g_IndiDict = {}
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMS": "@F77@"}
+        Group1.g_FamDict["@F94@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertTrue(StringListErrorSearch("Error US26:", "@F94@", errors))
+    
+    def test_US26_WIFE_Yes_FAMS(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+
+        Group1.g_IndiDict = {}
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMS": "@F94@"}
+        Group1.g_FamDict["@F94@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": []}
+        errors = Group1.US26Validation()
+        self.assertFalse(StringListErrorSearch("Error US26:", "@F94@", errors))
+    
+    #test for chil no fams
+    def test_US26_CHIL_No_FAMC(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        #parents
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMS": "@F77@"}
+        #children
+        Group1.g_IndiDict["@I57@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMC": "@F01@"}
+        #fam
+        Group1.g_FamDict["@F95@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": ['@I57@']}
+        errors = Group1.US26Validation()
+        self.assertTrue(StringListErrorSearch("Error US26:", "@I57@", errors))
+    
+    def test_US26_CHIL_Yes_FAMC(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+        #parents
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMS": "@F77@"}
+        #children
+        Group1.g_IndiDict["@I57@"] = {"NAME": "Sallie Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMC": "@F95@"}
+        Group1.g_IndiDict["@I58@"] = {"NAME": "Jenn Barker", "BIRT": "01 JAN 2000", "SEX":"F", "FAMC": "@F95@"}
+        #fam
+        Group1.g_FamDict["@F95@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": ['@I57@', '@I58@']}
+        errors = Group1.US26Validation()
+        self.assertFalse(StringListErrorSearch("Error US26:", "@I57@", errors))
 
 if __name__ == '__main__':
     unittest.main()

@@ -566,7 +566,59 @@ def US24Validation():
 # records should have corresponding entries in the corresponding  individual's records. 
 # I.e. the information in the individual and family records should be consistent.
 def US26Validation():
-    pass
+    errors = []
+    # Check invididuals for FAMC in Families in the list under CHIL
+    for anIndi in g_IndiDict.keys():
+        if 'FAMC' in g_IndiDict[anIndi].keys():
+            family_of_chil = g_IndiDict[anIndi]['FAMC']
+            if  family_of_chil not in g_FamDict \
+                or 'CHIL' not in g_FamDict[family_of_chil].keys() \
+                or anIndi not in g_FamDict[family_of_chil]['CHIL']:
+                errors.append(f'Error US26: Individual {anIndi} is listed as a child of {family_of_chil} but is' + \
+                              'not present in that family.')
+    
+    # Check individuals for FAMS in Families under HUSB or WIFE
+    for anIndi in g_IndiDict.keys():
+        if 'FAMS' in g_IndiDict[anIndi].keys():
+            family_of_spou = g_IndiDict[anIndi]['FAMS']
+            if  family_of_spou not in g_FamDict \
+                or 'CHIL' not in g_FamDict[family_of_spou].keys() \
+                or (anIndi != g_FamDict[family_of_spou]['HUSB'] and anIndi != g_FamDict[family_of_spou]['WIFE']):
+                errors.append(f'Error US26: Individual {anIndi} is listed as a spouse in {family_of_spou} but is' + \
+                              'not present in that family.')
+    
+    # Check families for HUSB in Individ with FAMS
+    for aFam in g_FamDict.keys():
+        if 'HUSB' in g_FamDict[aFam].keys():
+            husb_of_fam = g_FamDict[aFam]['HUSB']
+            if husb_of_fam not in g_IndiDict \
+            or 'FAMS' not in g_IndiDict[husb_of_fam].keys() \
+            or aFam != g_IndiDict[husb_of_fam]['FAMS']:
+                errors.append(f'Error US26: Husband {husb_of_fam} of family {aFam} is not accounted for with proper' + \
+                              'FAMS tag in individuals list.')
+
+    # Check families for WIFE in Individ with FAMS
+    for aFam in g_FamDict.keys():
+        if 'WIFE' in g_FamDict[aFam].keys():
+            wife_of_fam = g_FamDict[aFam]['WIFE']
+            if wife_of_fam not in g_IndiDict \
+            or 'FAMS' not in g_IndiDict[wife_of_fam].keys() \
+            or aFam != g_IndiDict[wife_of_fam]['FAMS']:
+                errors.append(f'Error US26: Wife {wife_of_fam} of family {aFam} is not accounted for with proper' + \
+                              'FAMS tag in individuals list.')
+
+    # Check families for CHIL in Invivid with FAMC
+    for aFam in g_FamDict.keys():
+        if 'CHIL' in g_FamDict[aFam].keys():
+            children = g_FamDict[aFam]['CHIL']
+            for child in children:
+                if child not in g_IndiDict \
+                or 'FAMC' not in g_IndiDict[child].keys() \
+                or aFam != g_IndiDict[child]['FAMC']:
+                    errors.append(f'Error US26: Child {child} of family {aFam} is not accounted for with proper' + \
+                                'FAMC tag in individuals list.')
+
+    return errors
 
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
@@ -592,6 +644,8 @@ def DataValidation():
     errorQueue.append(US15Validation())
     errorQueue.append(US21Validation())
     errorQueue.append(US22Validation())
+    errorQueue.append(US24Validation())
+    errorQueue.append(US26Validation())
 
     printQueue(errorQueue)
     
