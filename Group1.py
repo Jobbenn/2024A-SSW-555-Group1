@@ -999,6 +999,7 @@ def List_US32():
         if "CHIL" in family:
             children = family["CHIL"]
             birth_dates = defaultdict(list)
+            
 
             for child_id in children:
                 child_details = g_IndiDict.get(child_id, {})
