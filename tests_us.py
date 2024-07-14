@@ -479,17 +479,17 @@ class TestValidationFunctions(unittest.TestCase):
 
     # US24 Tests
     def test_US24_Duplicates(self):
-        Group1.g_FamDict["@F23@"] = {"MARR": "01 JAN 1990", "HUSB": "@I1@", "WIFE": "@I3@"}
-        Group1.g_FamDict["@F24@"] = {"MARR": "01 JAN 1991", "HUSB": "@I1@", "WIFE": "@I3@"}
-        Group1.g_FamDict["@F25@"] = {"MARR": "01 JAN 1990", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F88@"] = {"MARR": "04 MAY 1994", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F89@"] = {"MARR": "04 MAY 1991", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F90@"] = {"MARR": "04 MAY 1994", "HUSB": "@I1@", "WIFE": "@I3@"}
         errors = Group1.US24Validation()
-        self.assertTrue(StringListErrorStarts("Error US24:", errors))
+        self.assertTrue(StringListErrorSearch("Error US24:", "04 MAY 1994", errors))
     
     def test_US24_No_Duplicates(self):
-        Group1.g_FamDict["@F23@"] = {"MARR": "01 JAN 1990", "HUSB": "@I1@", "WIFE": "@I3@"}
-        Group1.g_FamDict["@F24@"] = {"MARR": "01 JAN 1991", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F91@"] = {"MARR": "04 MAY 1997", "HUSB": "@I1@", "WIFE": "@I3@"}
+        Group1.g_FamDict["@F92@"] = {"MARR": "04 MAY 1998", "HUSB": "@I1@", "WIFE": "@I3@"}
         errors = Group1.US24Validation()
-        self.assertFalse(StringListErrorStarts("Error US24:", errors))
+        self.assertFalse(StringListErrorSearch("Error US24:", "04 MAY 1997", errors))
 
 if __name__ == '__main__':
     unittest.main()

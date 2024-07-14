@@ -539,7 +539,26 @@ def US22Validation():
     return errors
     
 def US24Validation():
-    return []
+    errors = []
+
+    families = []
+
+    for aFam in g_FamDict.keys():
+
+        if "MARR" in g_FamDict[aFam].keys() and "HUSB" in g_FamDict[aFam].keys() and "WIFE" in g_FamDict[aFam].keys():
+            
+            theWife = g_FamDict[aFam]["WIFE"]
+            theHusb = g_FamDict[aFam]["HUSB"]
+            marriageDT = g_FamDict[aFam]["MARR"]
+
+            fam = [marriageDT, theWife, theHusb]
+
+            if fam in families:
+                errors.append(f"Error US24: The family consisting of {theWife} and {theHusb} ({marriageDT}) is duplicated.")
+            else:
+                families.append(fam)
+
+    return errors
 
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
