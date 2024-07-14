@@ -2,6 +2,7 @@
 
 from prettytable import PrettyTable
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 #-------------------------------------------------------------------------------
 # Data
@@ -647,6 +648,7 @@ def DataValidation():
     errorQueue.append(US24Validation())
     errorQueue.append(US26Validation())
 
+
     printQueue(errorQueue)
     
     #...
@@ -975,12 +977,54 @@ def List_US30():
     print(liveMarried)
     print("\n")
 
+def List_US31():
+    liveSingle = []
 
+    for indi_id, indi in g_IndiDict.items():
+        if 'DEAT' not in indi and 'FAMS' not in indi:
+            liveSingle.append(indi["NAME"])
+
+    liveSingle = list(set(liveSingle))
+
+    print("List of all living and single individuals:")
+    print(liveSingle)
+    print("\n")
+
+    return liveSingle
+
+def List_US32():
+    multiple_births = defaultdict(list)
+
+    for fam_id, family in g_FamDict.items():
+        if "CHIL" in family:
+            children = family["CHIL"]
+            birth_dates = defaultdict(list)
+
+            for child_id in children:
+                child_details = g_IndiDict.get(child_id, {})
+                birth_date = child_details.get("BIRT", None)
+                if birth_date:
+                    birth_dates[birth_date].append(child_id)
+
+            for birth_date, siblings in birth_dates.items():
+                if len(siblings) > 1:
+                    multiple_births[fam_id].append((birth_date, siblings))
+
+    print("List of all multiple births:")
+    for fam_id, birth_info in multiple_births.items():
+        for birth_date, siblings in birth_info:
+            print(f"Family {fam_id} has multiple births on {birth_date}: {', '.join(siblings)}")
+    print("\n")
+
+    return multiple_births
+    
 def PrintLists():
     List_US27()
     List_US28()
     List_US29()
     List_US30()
+    List_US31()
+    List_US32()
     #...
 
 #-------------------------------------------------------------------------------
