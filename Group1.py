@@ -891,7 +891,53 @@ def PrintTables():
 #-------------------------------------------------------------------------------
 # List User Story Functions
 #-------------------------------------------------------------------------------
+def List_US27():
+    ageList = []
+    
+    for anIndiID in g_IndiDict.keys():
+        indi = g_IndiDict[anIndiID]
+        name = indi.get("NAME", "Unknown")
+        birth_date = indi.get("BIRT", "Unknown")
+        death_date = indi.get("DEAT", None)
+    
+        if birth_date != "Unknown":
+            age = calculate_age(birth_date, death_date)
+            ageList.append(f"{name} ({anIndiID}): Age {age}")
 
+    print("List of all individuals and their age:")
+    for indi in ageList:
+        print(indi)
+    print("\n")
+
+def List_US28():
+    siblings_by_age = {}
+
+    for fam_id, family in g_FamDict.items():
+        if "CHIL" in family:
+            children = family["CHIL"]
+            sibling_ages = []
+            
+            for child_id in children:
+                child_details = g_IndiDict.get(child_id, {})
+                name = child_details.get("NAME", "Unknown")
+                birth_date = child_details.get("BIRT", None)
+                death_date = child_details.get("DEAT", None)
+
+                if birth_date:
+                    age = calculate_age(birth_date, death_date)
+                    sibling_ages.append((name, age))
+
+            sibling_ages.sort(key=lambda x: x[1], reverse=True)
+            siblings_by_age[fam_id] = sibling_ages
+
+    print("List of siblings in families by decreasing age:")
+    for fam_id, siblings in siblings_by_age.items():
+        if siblings:
+            print(f"Family {fam_id}:")
+            for sibling in siblings:
+                    print(f"  {sibling[0]}: Age {sibling[1]}")
+    print("\n")
+            
 def List_US29():
     deadList = []
     
@@ -931,6 +977,8 @@ def List_US30():
 
 
 def PrintLists():
+    List_US27()
+    List_US28()
     List_US29()
     List_US30()
     #...
