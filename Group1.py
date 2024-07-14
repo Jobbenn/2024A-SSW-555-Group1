@@ -537,7 +537,8 @@ def US22Validation():
         errors.append("Error US22: duplicate keys found between g_IndiDict and g_FamDict!\n")
 
     return errors
-    
+
+# US24 No more than one family with the same spouses by name and the same marriage date should appear in a GEDCOM file
 def US24Validation():
     errors = []
 
@@ -559,6 +560,13 @@ def US24Validation():
                 families.append(fam)
 
     return errors
+
+# US26 All family roles (spouse, child) specified in an individual record should have corresponding entries in
+# the corresponding family records. Likewise, all individual roles (spouse, child) specified in family
+# records should have corresponding entries in the corresponding  individual's records. 
+# I.e. the information in the individual and family records should be consistent.
+def US26Validation():
+    pass
 
 #Takes in a list of stringLists and prints every string
 def printQueue(stringListList):
