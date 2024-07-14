@@ -989,7 +989,6 @@ def List_US31():
     print("List of all living and single individuals:")
     print(liveSingle)
     print("\n")
-
     return liveSingle
 
 def List_US32():
@@ -999,8 +998,7 @@ def List_US32():
         if "CHIL" in family:
             children = family["CHIL"]
             birth_dates = defaultdict(list)
-            
-
+    
             for child_id in children:
                 child_details = g_IndiDict.get(child_id, {})
                 birth_date = child_details.get("BIRT", None)
