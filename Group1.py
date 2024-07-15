@@ -318,40 +318,32 @@ def US08Validation():
 #09 Birth before death of parents
 def US09Validation():
     errors = []
-    for aFam in g_FamDict.keys():
-        if "MARR" in g_FamDict[aFam]:
-            marriageDT = datetime.strptime(g_FamDict[aFam]["MARR"], "%d %b %Y")
+    for fam_id, family in g_FamDict.items():
+        husband_id = family.get('HUSB')
+        wife_id = family.get('WIFE')
 
-        theWife = g_FamDict[aFam]["WIFE"]
-        theHusb = g_FamDict[aFam]["HUSB"]
+        father_death_date = None
+        mother_death_date = None
 
-        if theHusb:
-            father_death = g_IndiDict[theHusb].get('DEAT')
+        if husband_id and husband_id in g_IndiDict:
+            father_death = g_IndiDict[husband_id].get('DEAT')
             if father_death:
-             father_death_date = parse_gedcom_date(father_death) # type: ignore
-            else:
-                father_death_date = None
+                father_death_date = parse_gedcom_date(father_death)
 
-        if theWife:
-            mother_death = g_IndiDict[theWife].get('DEAT')
+        if wife_id and wife_id in g_IndiDict:
+            mother_death = g_IndiDict[wife_id].get('DEAT')
             if mother_death:
-                mother_death_date = parse_gedcom_date(mother_death) # type: ignore
-            else:
-                mother_death_date = None
+                mother_death_date = parse_gedcom_date(mother_death)
 
-        if "CHIL" in g_FamDict[aFam]:
-            for child_id in g_FamDict[aFam]["CHIL"]:
-                if child_id in g_IndiDict:
-                    birth_date_str = g_IndiDict[child_id].get("BIRT")
-                    if birth_date_str:
-                        birth_date = parse_gedcom_date(birth_date_str) # type: ignore
-                        if mother_death_date and birth_date > mother_death_date:
-                            errors.append(f"Error US09: Child {child_id} born after mother's death.")
-                        if father_death_date and birth_date > father_death_date + timedelta(days=9*30):
-                            errors.append(f"Error US09: Child {child_id} born more than 9 months after father's death.")
-                else:
-                    print(f"Debug: Child ID {child_id} not found in individual dictionary.")
-                    errors.append(f"Error US09: Child ID {child_id} not found in individual dictionary.")
+        for child_id in family.get('CHIL', []):
+            if child_id in g_IndiDict:
+                birth_date_str = g_IndiDict[child_id].get('BIRT')
+                if birth_date_str:
+                    birth_date = parse_gedcom_date(birth_date_str)
+                    if mother_death_date and birth_date and birth_date > mother_death_date:
+                        errors.append(f"Error US09: Child {child_id} born after mother's death.")
+                    if father_death_date and birth_date and birth_date > father_death_date + timedelta(days=9*30):
+                        errors.append(f"Error US09: Child {child_id} born more than 9 months after father's death.")
     return errors
 
 # US10 No marriage before 14
@@ -659,6 +651,14 @@ def DataValidation():
 #-------------------------------------------------------------------------------
 # File & Field Parsing Functions
 #-------------------------------------------------------------------------------
+def parse_gedcom_date(date_str):
+    try:
+        if date_str.startswith(('AFT', 'BEF', 'ABT')):
+            parts = date_str.split(' ', 1)
+            date_str = parts[1]
+        return datetime.strptime(date_str, '%d %b %Y')
+    except ValueError:
+        return None
 
 def ParseData(inFile):
     indID  = ""
