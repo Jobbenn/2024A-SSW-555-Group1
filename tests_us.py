@@ -3,7 +3,10 @@ from datetime import datetime
 import Group1
 unittest.TestLoader.sortTestMethodsUsing = None
 
-
+class TestValidationFunctions(unittest.TestCase):
+    def setUp(self):
+        Group1.g_IndiDict.clear()
+        Group1.g_FamDict.clear()
 
 def StringListErrorSearch(prefixStr, idStr, errorList):
     for aString in errorList:
@@ -578,6 +581,45 @@ class TestValidationFunctions(unittest.TestCase):
         Group1.g_FamDict["@F95@"] = {"MARR": "04 MAY 1994", "HUSB": "@I54@", "WIFE": "@I55@", "CHIL": ['@I57@', '@I58@']}
         errors = Group1.US26Validation()
         self.assertFalse(StringListErrorSearch("Error US26:", "@I57@", errors))
+
+    # US31 Tests
+    def test_US31_living_single(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "John Doe", "BIRT": "01 JAN 1980", "SEX": "M"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Jane Smith", "BIRT": "01 FEB 1985", "SEX": "F", "DEAT": "01 JAN 2020"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Alice Doe", "BIRT": "01 JAN 2010", "SEX": "F"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "Bob Doe", "BIRT": "01 JAN 1985", "SEX": "M"}
+        Group1.g_IndiDict["@I5@"] = {"NAME": "Carol Smith", "BIRT": "01 FEB 1987", "SEX": "F"}
+        Group1.g_IndiDict["@I6@"] = {"NAME": "Daisy Jones", "BIRT": "01 MAR 1990", "SEX": "F"}
+        Group1.g_IndiDict["@I7@"] = {"NAME": "Eve Johnson", "BIRT": "01 APR 1992", "SEX": "F", "FAMS": "@F2@"}
+
+        expected = ["John Doe", "Alice Doe", "Bob Doe", "Carol Smith", "Daisy Jones"]
+        result = Group1.List_US31()
+        self.assertEqual(sorted(result), sorted(expected))
+
+    # US32 Tests
+    def test_US32_multiple_births(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Alice", "BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Bob", "BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Charlie", "BIRT": "01 FEB 2000"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "David", "BIRT": "01 FEB 2000"}
+        Group1.g_IndiDict["@I5@"] = {"NAME": "Eve", "BIRT": "01 MAR 2000"}
+        Group1.g_FamDict["@F1@"] = {"CHIL": ["@I1@", "@I2@", "@I3@", "@I4@", "@I5@"]}
+
+        expected = {'@F1@': [('01 JAN 2000', ['@I1@', '@I2@']), ('01 FEB 2000', ['@I3@', '@I4@'])]}
+        result = Group1.List_US32()
+        self.assertEqual(result, expected)
+
+    def test_US32_no_multiple_births(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Alice", "BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Bob", "BIRT": "01 JAN 2001"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Charlie", "BIRT": "01 FEB 2002"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "David", "BIRT": "01 FEB 2003"}
+        Group1.g_IndiDict["@I5@"] = {"NAME": "Eve", "BIRT": "01 MAR 2004"}
+        Group1.g_FamDict["@F1@"] = {"CHIL": ["@I1@", "@I2@", "@I3@", "@I4@", "@I5@"]}
+
+        expected = {}
+        result = Group1.List_US32()
+        self.assertEqual(result, expected)
 
 if __name__ == '__main__':
     unittest.main()
