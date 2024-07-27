@@ -628,11 +628,30 @@ class TestValidationFunctions(unittest.TestCase):
         Group1.g_FamDict = {}
 
         Group1.g_IndiDict = {}
-        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 AUG 2000", "SEX":"M", "FAMS": "@F94@"}
-        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "04 AUG 2000", "SEX":"F", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "19 AUG 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "24 AUG 2000", "SEX":"F", "FAMS": "@F94@"}
         Group1.g_IndiDict["@I56@"] = {"NAME": "Falsetto Barker", "BIRT": "25 DEC 2000", "SEX":"F", "FAMS": "@F94@"}
         upcoming = Group1.List_US38()
         self.assertEqual(upcoming, ['Individual @I54@: Bob Barker', 'Individual @I55@: Sally Barker'])
+    
+    # US39 Test
+    def test_US39(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+
+        #FAM_positive
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Bob Barker", "BIRT": "01 JAN 2000", "SEX":"M"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Sally Barker", "BIRT": "01 JAN 2000", "SEX":"F"}
+        Group1.g_FamDict["@F1@"] = {"MARR": "24 AUG 1994", "HUSB": "@I1@", "WIFE": "@I2@"}
+
+        #FAM_negative
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Lucy Lemming", "BIRT": "01 JAN 2000", "SEX":"F"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "Larry Lemming", "BIRT": "01 JAN 2000", "SEX":"M"}
+        Group1.g_FamDict["@F2@"] = {"MARR": "04 MAY 1994", "HUSB": "@I4@", "WIFE": "@I3@"}
+
+        upcoming = Group1.List_US39()
+        self.assertEqual(upcoming, ['Family @F1@: Bob Barker and Sally Barker'])
 
 if __name__ == '__main__':
     unittest.main()

@@ -1017,7 +1017,7 @@ def List_US32():
     print("\n")
     return multiple_births
 
-# uS38 List Upcoming Birthdays
+# US38 List Upcoming Birthdays
 def List_US38():
     upcoming = []
 
@@ -1042,6 +1042,38 @@ def List_US38():
     
     return upcoming
 
+# US39 List Upcoming Anniversaries
+def List_US39():
+    upcoming = []
+
+    today = datetime.today()
+
+    for fam_id in g_FamDict.keys():
+        if 'DIV' not in g_FamDict[fam_id].keys():
+
+            #check both partners alive
+            husb_id = g_FamDict[fam_id]['HUSB']
+            wife_id = g_FamDict[fam_id]['WIFE']
+
+            if 'DEAT' not in g_IndiDict[husb_id].keys() and 'DEAT' not in g_IndiDict[wife_id].keys():
+                anniversary = datetime.strptime(g_FamDict[fam_id]["MARR"], "%d %b %Y")
+
+                anniversary = anniversary.replace(year=today.year)
+
+                differenceDT = anniversary - today
+                within30 = (differenceDT.days % 365) <= 30
+
+                if within30:
+                    anni_announcement = f"Family {fam_id}: {g_IndiDict[husb_id]['NAME']} and {g_IndiDict[wife_id]['NAME']}"
+                    upcoming.append(anni_announcement)
+
+    print("List of all upcoming wedding anniversaries:")
+    for u in upcoming:
+        print(u)
+    print("\n")
+    
+    return upcoming
+
 def PrintLists():
     List_US27()
     List_US28()
@@ -1050,6 +1082,7 @@ def PrintLists():
     List_US31()
     List_US32()
     List_US38()
+    List_US39()
     #...
 
 #-------------------------------------------------------------------------------
