@@ -1,5 +1,5 @@
 import unittest 
-from datetime import datetime
+from datetime import datetime, timedelta
 import Group1
 unittest.TestLoader.sortTestMethodsUsing = None
 
@@ -652,6 +652,47 @@ class TestValidationFunctions(unittest.TestCase):
 
         upcoming = Group1.List_US39()
         self.assertEqual(upcoming, ['Family @F1@: Bob Barker and Sally Barker'])
+
+# US37 Tests
+    def test_US37_recent_survivors(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "John Doe", "DEAT": (datetime.today() - timedelta(days=5)).strftime("%d %b %Y"), "FAMS": "@F1@"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Jane Doe", "FAMS": "@F1@"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Baby Doe"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "CHIL": ["@I3@"]}
+
+        expected = ["Jane Doe", "Baby Doe"]
+        result = Group1.List_US37()
+        self.assertEqual(result, expected)
+
+    def test_US37_no_recent_deaths(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "John Doe", "DEAT": (datetime.today() - timedelta(days=50)).strftime("%d %b %Y"), "FAMS": "@F1@"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Jane Doe", "FAMS": "@F1@"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Baby Doe"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "CHIL": ["@I3@"]}
+
+        expected = []
+        result = Group1.List_US37()
+        self.assertEqual(result, expected)
+
+# US42 tests
+    def test_US42(self):
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+
+    def test_US42_invalid_death_date(self):
+        Group1.g_IndiDict["@I2@"] = {"DEAT": "31 FEB 2020"}  # Invalid date
+        expected = ["Error US42: Individual @I2@ has an invalid death date."]
+        result = Group1.List_US42()
+        self.assertEqual(result, expected)
+
+    def test_US42_no_invalid_dates(self):
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I2@"] = {"DEAT": "01 FEB 2020"}
+        Group1.g_FamDict["@F1@"] = {"MARR": "01 JAN 1990"}
+        Group1.g_FamDict["@F2@"] = {"DIV": "01 JUN 2000"}
+        expected = []
+        result = Group1.List_US42()
+        self.assertEqual(result, expected)
 
 if __name__ == '__main__':
     unittest.main()

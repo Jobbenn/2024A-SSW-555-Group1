@@ -1073,6 +1073,67 @@ def List_US39():
     print("\n")
     
     return upcoming
+#US37 : List all recent survivors
+def List_US37():
+    recent_deaths = []
+    today = datetime.today()
+    thirty_days_ago = today - timedelta(days=30)
+
+    for indi_id, indi in g_IndiDict.items():
+        if "DEAT" in indi:
+            death_date = datetime.strptime(indi["DEAT"], "%d %b %Y")
+            if thirty_days_ago <= death_date <= today:
+                family_id = indi.get("FAMS", None)
+                survivors = []
+                if family_id:
+                    family = g_FamDict.get(family_id, {})
+                    if "HUSB" in family and family["HUSB"] != indi_id:
+                        survivors.append(g_IndiDict[family["HUSB"]]["NAME"])
+                    if "WIFE" in family and family["WIFE"] != indi_id:
+                        survivors.append(g_IndiDict[family["WIFE"]]["NAME"])
+                    if "CHIL" in family:
+                        for child_id in family["CHIL"]:
+                            survivors.append(g_IndiDict[child_id]["NAME"])
+                recent_deaths.append({"name": indi["NAME"], "survivors": survivors})
+
+    survivors_list = []
+    for entry in recent_deaths:
+        survivors_list.extend(entry['survivors'])
+
+    print("List of recent survivors:")
+    for survivor in survivors_list:
+        print(survivor)
+    print("\n")
+    return survivors_list
+
+#US42:reject all illegitimate dates
+def List_US42():
+    errors = [] 
+
+    def is_valid_date(date_str):
+        try:
+            datetime.strptime(date_str, '%d %b %Y')
+            return True
+        except ValueError:
+            return False
+
+    for indi_id, indi in g_IndiDict.items():
+        if "BIRT" in indi and not is_valid_date(indi["BIRT"]):
+            errors.append(f"Error US42: Individual {indi_id} has an invalid birth date.")
+        if "DEAT" in indi and not is_valid_date(indi["DEAT"]):
+            errors.append(f"Error US42: Individual {indi_id} has an invalid death date.")
+    
+    for fam_id, fam in g_FamDict.items():
+        if "MARR" in fam and not is_valid_date(fam["MARR"]):
+            errors.append(f"Error US42: Family {fam_id} has an invalid marriage date.")
+        if "DIV" in fam and not is_valid_date(fam["DIV"]):
+            errors.append(f"Error US42: Family {fam_id} has an invalid divorce date.")
+
+    print("List of all invalid dates:")
+    for error in errors:
+        print(error)
+    return errors
+
 
 def PrintLists():
     List_US27()
@@ -1081,8 +1142,10 @@ def PrintLists():
     List_US30()
     List_US31()
     List_US32()
+    List_US37()
     List_US38()
     List_US39()
+    List_US42()
     #...
 
 #-------------------------------------------------------------------------------
