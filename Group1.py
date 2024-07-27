@@ -1016,7 +1016,32 @@ def List_US32():
             print(f"Family {fam_id} has multiple births on {birth_date}: {', '.join(siblings)}")
     print("\n")
     return multiple_births
+
+# uS38 List Upcoming Birthdays
+def List_US38():
+    upcoming = []
+
+    today = datetime.today()
+
+    for indi_id in g_IndiDict.keys():
+        if 'DEAT' not in g_IndiDict[indi_id].keys():
+            indi_birth = get_individual_birth_date(indi_id)
+            indi_birth = indi_birth.replace(year=today.year)
+
+            differenceDT = indi_birth - today
+            within30 = (differenceDT.days % 365) <= 30
+
+            if within30:
+                birthday_announcement = f"Individual {indi_id}: {g_IndiDict[indi_id]['NAME']}"
+                upcoming.append(birthday_announcement)
+
+    print("List of all upcoming birthdays:")
+    for u in upcoming:
+        print(u)
+    print("\n")
     
+    return upcoming
+
 def PrintLists():
     List_US27()
     List_US28()
@@ -1024,6 +1049,7 @@ def PrintLists():
     List_US30()
     List_US31()
     List_US32()
+    List_US38()
     #...
 
 #-------------------------------------------------------------------------------

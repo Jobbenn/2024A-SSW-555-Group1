@@ -621,5 +621,18 @@ class TestValidationFunctions(unittest.TestCase):
         result = Group1.List_US32()
         self.assertEqual(result, expected)
 
+    # US38 Test
+    def test_US38(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
+
+        Group1.g_IndiDict = {}
+        Group1.g_IndiDict["@I54@"] = {"NAME": "Bob Barker", "BIRT": "01 AUG 2000", "SEX":"M", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I55@"] = {"NAME": "Sally Barker", "BIRT": "04 AUG 2000", "SEX":"F", "FAMS": "@F94@"}
+        Group1.g_IndiDict["@I56@"] = {"NAME": "Falsetto Barker", "BIRT": "25 DEC 2000", "SEX":"F", "FAMS": "@F94@"}
+        upcoming = Group1.List_US38()
+        self.assertEqual(upcoming, ['Individual @I54@: Bob Barker', 'Individual @I55@: Sally Barker'])
+
 if __name__ == '__main__':
     unittest.main()
