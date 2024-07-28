@@ -694,5 +694,24 @@ class TestValidationFunctions(unittest.TestCase):
         result = Group1.List_US42()
         self.assertEqual(result, expected)
 
+#35 & 36
+    def test_US35(self):
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I2@"] = {"DEAT": "01 FEB 2020"}
+        Group1.g_FamDict["@F1@"] = {"MARR": "01 JAN 1990"}
+        Group1.g_FamDict["@F2@"] = {"DIV": "01 JUN 2000"}
+        expected = []
+        result = Group1.List_US35()
+        self.assertEqual(result, expected)
+
+    def test_US36(self):
+        Group1.g_IndiDict["@I1@"] = {"BIRT": "01 JAN 2000"}
+        Group1.g_IndiDict["@I2@"] = {"DEAT": "01 FEB 2020"}
+        Group1.g_FamDict["@F1@"] = {"MARR": "01 JAN 1990"}
+        Group1.g_FamDict["@F2@"] = {"DIV": "01 JUN 2000"}
+        expected = []
+        result = Group1.List_US36()
+        self.assertEqual(result, expected)
+
 if __name__ == '__main__':
     unittest.main()

@@ -59,6 +59,13 @@ def calculate_age(birth_date, death_date=None):
         end_dt = datetime.today()
     return AgeDateTimeCalc(birth_dt, end_dt)
 
+def calculate_days(date):
+    theDate = datetime.strptime(date, "%d %b %Y")
+
+    durationDate = datetime.today() - theDate
+
+    return durationDate.days
+
 def get_individual_birth_date(individual_id):
     if individual_id in g_IndiDict and "BIRT" in g_IndiDict[individual_id]:
         return datetime.strptime(g_IndiDict[individual_id]["BIRT"], "%d %b %Y")
@@ -1134,6 +1141,50 @@ def List_US42():
         print(error)
     return errors
 
+#Recent births (30 days)
+def List_US35():
+    birthList = []
+    
+    for anIndiID in g_IndiDict.keys():
+        indi = g_IndiDict[anIndiID]
+        name = indi.get("NAME", "Unknown")
+        birth_date = indi.get("BIRT", "Unknown")
+    
+        if birth_date != "Unknown":
+            ageDays = calculate_days(birth_date)
+
+            if(30 >= ageDays):
+                birthList.append(namne)
+
+    print("List of all individuals born recently:")
+    for indi in birthList:
+        print(indi)
+    print("\n")
+
+    return birthList
+
+#Recent deaths (30 days)
+def List_US36():
+    deathList = []
+    
+    for anIndiID in g_IndiDict.keys():
+        indi = g_IndiDict[anIndiID]
+        name = indi.get("NAME", "Unknown")
+        death_date = indi.get("DEAT", "Unknown")
+    
+        if death_date != "Unknown":
+            deathDays = calculate_days(death_date)
+
+            if(30 >= deathDays):
+                deathList.append(namne)
+
+    print("List of all recently deceased:")
+    for indi in deathList:
+        print(indi)
+    print("\n")
+
+    return deathList
+
 
 def PrintLists():
     List_US27()
@@ -1146,6 +1197,8 @@ def PrintLists():
     List_US38()
     List_US39()
     List_US42()
+    List_US35()
+    List_US36()
     #...
 
 #-------------------------------------------------------------------------------
