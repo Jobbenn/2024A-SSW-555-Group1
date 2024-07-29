@@ -1031,8 +1031,8 @@ def List_US33():
     for fam_id, family in g_FamDict.items():
         if "CHIL" in family:
             children = family["CHIL"]
-            father_dead = "DEAT" in g_IndiDict.get(family.get("HUSB"), {})
-            mother_dead = "DEAT" in g_IndiDict.get(family.get("WIFE"), {})
+            father_dead = "DEAT" in g_IndiDict.get(family.get("HUSB", ""), {})
+            mother_dead = "DEAT" in g_IndiDict.get(family.get("WIFE", ""), {})
 
             if father_dead and mother_dead:
                 for child_id in children:
@@ -1047,6 +1047,7 @@ def List_US33():
     for orphan_id in orphaned_children:
         print(f"Orphan {orphan_id}: {g_IndiDict[orphan_id]['NAME']}")
     print("\n")
+    return orphaned_children
 
 # US34
 def List_US34():
