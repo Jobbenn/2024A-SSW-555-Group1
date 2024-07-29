@@ -596,6 +596,54 @@ class TestValidationFunctions(unittest.TestCase):
         result = Group1.List_US31()
         self.assertEqual(sorted(result), sorted(expected))
 
+    #US33 Tests
+    def test_US33_orphans(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Father", "DEAT": "01 JAN 2010"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Mother", "DEAT": "01 JAN 2011"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Child 1", "BIRT": "01 JAN 2005"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "Child 2", "BIRT": "01 JAN 2010"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "CHIL": ["@I3@", "@I4@"]}
+
+        expected = ['@I3@', '@I4@']
+        result = Group1.List_US33()
+        self.assertEqual(result, expected)
+
+    def test_US33_no_orphans(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Father", "DEAT": "01 JAN 2010"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Mother", "DEAT": "01 JAN 2011"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Child 1", "BIRT": "01 JAN 1990"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "Child 2", "BIRT": "01 JAN 1985"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "CHIL": ["@I3@", "@I4@"]}
+
+        expected = []
+        result = Group1.List_US33()
+        self.assertEqual(result, expected)
+
+    # US34 Tests
+    def test_US34_large_age_difference(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Husband", "BIRT": "01 JAN 1950"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Wife", "BIRT": "01 JAN 1980"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Husband", "BIRT": "01 JAN 1960"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "Wife", "BIRT": "01 JAN 1970"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "MARR": "01 JAN 2000"}
+        Group1.g_FamDict["@F2@"] = {"HUSB": "@I3@", "WIFE": "@I4@", "MARR": "01 JAN 2000"}
+
+        expected = ['@F1@']
+        result = Group1.List_US34()
+        self.assertEqual(result, expected)
+
+    def test_US34_no_large_age_difference(self):
+        Group1.g_IndiDict["@I1@"] = {"NAME": "Husband", "BIRT": "01 JAN 1960"}
+        Group1.g_IndiDict["@I2@"] = {"NAME": "Wife", "BIRT": "01 JAN 1970"}
+        Group1.g_IndiDict["@I3@"] = {"NAME": "Husband", "BIRT": "01 JAN 1965"}
+        Group1.g_IndiDict["@I4@"] = {"NAME": "Wife", "BIRT": "01 JAN 1975"}
+        Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "MARR": "01 JAN 2000"}
+        Group1.g_FamDict["@F2@"] = {"HUSB": "@I3@", "WIFE": "@I4@", "MARR": "01 JAN 2000"}
+
+        expected = []
+        result = Group1.List_US34()
+        self.assertEqual(result, expected)
+        
     # US32 Tests
     def test_US32_multiple_births(self):
         Group1.g_IndiDict["@I1@"] = {"NAME": "Alice", "BIRT": "01 JAN 2000"}
