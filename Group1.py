@@ -1024,6 +1024,56 @@ def List_US32():
     print("\n")
     return multiple_births
 
+# US33
+def List_US33():
+    orphaned_children = []
+
+    for fam_id, family in g_FamDict.items():
+        if "CHIL" in family:
+            children = family["CHIL"]
+            father_dead = "DEAT" in g_IndiDict.get(family.get("HUSB"), {})
+            mother_dead = "DEAT" in g_IndiDict.get(family.get("WIFE"), {})
+
+            if father_dead and mother_dead:
+                for child_id in children:
+                    child_details = g_IndiDict.get(child_id, {})
+                    birth_date = child_details.get("BIRT", None)
+                    if birth_date:
+                        age = calculate_age(birth_date)
+                        if age < 18:
+                            orphaned_children.append(child_id)
+
+    print("List of all orphans (both parents dead and child < 18 years old):")
+    for orphan_id in orphaned_children:
+        print(f"Orphan {orphan_id}: {g_IndiDict[orphan_id]['NAME']}")
+    print("\n")
+
+# US34
+def List_US34():
+    large_age_diff_couples = []
+
+    for fam_id, family in g_FamDict.items():
+        if "HUSB" in family and "WIFE" in family and "MARR" in family:
+            husb_id = family["HUSB"]
+            wife_id = family["WIFE"]
+            marriage_date = family["MARR"]
+
+            husb_birth_date = g_IndiDict[husb_id].get("BIRT")
+            wife_birth_date = g_IndiDict[wife_id].get("BIRT")
+
+            if husb_birth_date and wife_birth_date:
+                husb_age_at_marriage = calculate_age(husb_birth_date, marriage_date)
+                wife_age_at_marriage = calculate_age(wife_birth_date, marriage_date)
+
+                if husb_age_at_marriage > 2 * wife_age_at_marriage or wife_age_at_marriage > 2 * husb_age_at_marriage:
+                    large_age_diff_couples.append(fam_id)
+
+    print("List of all couples with a large age difference:")
+    for fam_id in large_age_diff_couples:
+        print(f"Family {fam_id}: {g_IndiDict[g_FamDict[fam_id]['HUSB']]['NAME']} and {g_IndiDict[g_FamDict[fam_id]['WIFE']]['NAME']}")
+    print("\n")
+    return large_age_diff_couples
+
 # US38 List Upcoming Birthdays
 def List_US38():
     upcoming = []
@@ -1193,12 +1243,14 @@ def PrintLists():
     List_US30()
     List_US31()
     List_US32()
+    List_US33()
+    List_US34()
+    List_US35()
+    List_US36()
     List_US37()
     List_US38()
     List_US39()
     List_US42()
-    List_US35()
-    List_US36()
     #...
 
 #-------------------------------------------------------------------------------
