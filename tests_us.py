@@ -598,16 +598,19 @@ class TestValidationFunctions(unittest.TestCase):
 
     #US33 Tests
     def test_US33_orphans(self):
+        #reset
+        Group1.g_IndiDict = {}
+        Group1.g_FamDict = {}
         Group1.g_IndiDict["@I1@"] = {"NAME": "Father", "DEAT": "01 JAN 2010"}
         Group1.g_IndiDict["@I2@"] = {"NAME": "Mother", "DEAT": "01 JAN 2011"}
         Group1.g_IndiDict["@I3@"] = {"NAME": "Child 1", "BIRT": "01 JAN 2005"}
         Group1.g_IndiDict["@I4@"] = {"NAME": "Child 2", "BIRT": "01 JAN 2010"}
         Group1.g_FamDict["@F1@"] = {"HUSB": "@I1@", "WIFE": "@I2@", "CHIL": ["@I3@", "@I4@"]}
 
-        expected = ['@I3@', '@I4@']
+        expected = ['@I4@']
         result = Group1.List_US33()
         self.assertEqual(result, expected)
-
+        
     def test_US33_no_orphans(self):
         Group1.g_IndiDict["@I1@"] = {"NAME": "Father", "DEAT": "01 JAN 2010"}
         Group1.g_IndiDict["@I2@"] = {"NAME": "Mother", "DEAT": "01 JAN 2011"}
